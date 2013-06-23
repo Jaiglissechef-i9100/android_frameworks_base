@@ -131,7 +131,7 @@ public class CameraTile extends QuickSettingsTile {
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (panel != null && panel.isFullyExpanded() && parent.getScaleX() == 1) {
+                    if (panel.isFullyExpanded() && parent.getScaleX() == 1) {
                         mHandler.postDelayed(this, 100);
                     } else {
                         mHandler.post(mReleaseCameraRunnable);
@@ -269,12 +269,22 @@ public class CameraTile extends QuickSettingsTile {
         mOnLongClick = new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
+                final Intent intent = new Intent();
                 if (mCamera != null) {
-                    return false;
-                }
+                    intent.setAction(Intent.ACTION_VIEW);
+                    intent.setType("image/*");
 
-                Intent intent = new Intent(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
-                startSettingsActivity(intent);
+                    mHandler.post(mReleaseCameraRunnable);
+                    mHandler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            startSettingsActivity(intent);
+                        }
+                    }, 150);
+                } else {
+                    intent.setAction(MediaStore.INTENT_ACTION_STILL_IMAGE_CAMERA);
+                    startSettingsActivity(intent);
+                }
                 return true;
             }
         };
@@ -330,7 +340,7 @@ public class CameraTile extends QuickSettingsTile {
 
         if (mCameraInfo.facing == Camera.CameraInfo.CAMERA_FACING_FRONT) {
             cameraOrientation = (mCameraInfo.orientation + mDisplayRotation) % 360;
-            cameraOrientation = (360 - cameraOrientation) % 360; // compensate the mirror
+            cameraOrientation = (360 - cameraOrientation) % 360;  // compensate the mirror
         } else {
             cameraOrientation = (mCameraInfo.orientation - mDisplayRotation + 360) % 360;
         }

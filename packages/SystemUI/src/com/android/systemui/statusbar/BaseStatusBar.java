@@ -961,6 +961,9 @@ public abstract class BaseStatusBar extends SystemUI implements
                             item.setChecked(!item.isChecked());
                             setIconHiddenByUser(packageNameF, item.isChecked());
                             updateNotificationIcons();
+                        } else if (item.getItemId() == R.id.notification_floating_item) {
+                            launchFloating(contentIntent);
+                            animateCollapsePanels(CommandQueue.FLAG_EXCLUDE_NONE);
                         } else {
                             return false;
                         }

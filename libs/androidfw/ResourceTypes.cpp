@@ -18,6 +18,7 @@
 #define LOG_TAG "ResourceType"
 //#define LOG_NDEBUG 0
 
+#define char16_t uint16_t
 #include <androidfw/ResourceTypes.h>
 #include <utils/Atomic.h>
 #include <utils/ByteOrder.h>
@@ -601,7 +602,7 @@ decodeLength(const uint8_t** str)
     return len;
 }
 
-const uint16_t* ResStringPool::stringAt(size_t idx, size_t* u16len) const
+const char16_t* ResStringPool::stringAt(size_t idx, size_t* u16len) const
 {
     if (mError == NO_ERROR && idx < mHeader->stringCount) {
         const bool isUTF8 = (mHeader->flags&ResStringPool_header::UTF8_FLAG) != 0;
@@ -630,7 +631,7 @@ const uint16_t* ResStringPool::stringAt(size_t idx, size_t* u16len) const
                     AutoMutex lock(mDecodeLock);
 
                     if (mCache == NULL) {
-#ifdef HAVE_ANDROID_OS
+#ifndef HAVE_ANDROID_OS
                         STRING_POOL_NOISY(ALOGI("CREATING STRING CACHE OF %d bytes",
                                 mHeader->stringCount*sizeof(char16_t**)));
 #else
@@ -923,7 +924,7 @@ int32_t ResXMLParser::getCommentID() const
 const uint16_t* ResXMLParser::getComment(size_t* outLen) const
 {
     int32_t id = getCommentID();
-    return id >= 0 ? mTree.mStrings.stringAt(id, outLen) : NULL;
+    return id >= 0 ? (const uint16_t*)mTree.mStrings.stringAt(id, outLen) : NULL;
 }
 
 uint32_t ResXMLParser::getLineNumber() const
@@ -942,7 +943,7 @@ int32_t ResXMLParser::getTextID() const
 const uint16_t* ResXMLParser::getText(size_t* outLen) const
 {
     int32_t id = getTextID();
-    return id >= 0 ? mTree.mStrings.stringAt(id, outLen) : NULL;
+    return id >= 0 ? (const uint16_t*)mTree.mStrings.stringAt(id, outLen) : NULL;
 }
 
 ssize_t ResXMLParser::getTextValue(Res_value* outValue) const
@@ -966,7 +967,7 @@ const uint16_t* ResXMLParser::getNamespacePrefix(size_t* outLen) const
 {
     int32_t id = getNamespacePrefixID();
     //printf("prefix=%d  event=%p\n", id, mEventCode);
-    return id >= 0 ? mTree.mStrings.stringAt(id, outLen) : NULL;
+    return id >= 0 ? (const uint16_t*)mTree.mStrings.stringAt(id, outLen) : NULL;
 }
 
 int32_t ResXMLParser::getNamespaceUriID() const
@@ -981,7 +982,7 @@ const uint16_t* ResXMLParser::getNamespaceUri(size_t* outLen) const
 {
     int32_t id = getNamespaceUriID();
     //printf("uri=%d  event=%p\n", id, mEventCode);
-    return id >= 0 ? mTree.mStrings.stringAt(id, outLen) : NULL;
+    return id >= 0 ? (const uint16_t*)mTree.mStrings.stringAt(id, outLen) : NULL;
 }
 
 int32_t ResXMLParser::getElementNamespaceID() const
@@ -998,7 +999,7 @@ int32_t ResXMLParser::getElementNamespaceID() const
 const uint16_t* ResXMLParser::getElementNamespace(size_t* outLen) const
 {
     int32_t id = getElementNamespaceID();
-    return id >= 0 ? mTree.mStrings.stringAt(id, outLen) : NULL;
+    return id >= 0 ? (const uint16_t*)mTree.mStrings.stringAt(id, outLen) : NULL;
 }
 
 int32_t ResXMLParser::getElementNameID() const
@@ -1015,7 +1016,7 @@ int32_t ResXMLParser::getElementNameID() const
 const uint16_t* ResXMLParser::getElementName(size_t* outLen) const
 {
     int32_t id = getElementNameID();
-    return id >= 0 ? mTree.mStrings.stringAt(id, outLen) : NULL;
+    return id >= 0 ? (const uint16_t*)mTree.mStrings.stringAt(id, outLen) : NULL;
 }
 
 size_t ResXMLParser::getAttributeCount() const
@@ -1046,7 +1047,7 @@ const uint16_t* ResXMLParser::getAttributeNamespace(size_t idx, size_t* outLen) 
     int32_t id = getAttributeNamespaceID(idx);
     //printf("attribute namespace=%d  idx=%d  event=%p\n", id, idx, mEventCode);
     //XML_NOISY(printf("getAttributeNamespace 0x%x=0x%x\n", idx, id));
-    return id >= 0 ? mTree.mStrings.stringAt(id, outLen) : NULL;
+    return id >= 0 ? (const uint16_t*)mTree.mStrings.stringAt(id, outLen) : NULL;
 }
 
 const char* ResXMLParser::getAttributeNamespace8(size_t idx, size_t* outLen) const
@@ -1077,7 +1078,7 @@ const uint16_t* ResXMLParser::getAttributeName(size_t idx, size_t* outLen) const
     int32_t id = getAttributeNameID(idx);
     //printf("attribute name=%d  idx=%d  event=%p\n", id, idx, mEventCode);
     //XML_NOISY(printf("getAttributeName 0x%x=0x%x\n", idx, id));
-    return id >= 0 ? mTree.mStrings.stringAt(id, outLen) : NULL;
+    return id >= 0 ? (const uint16_t*)mTree.mStrings.stringAt(id, outLen) : NULL;
 }
 
 const char* ResXMLParser::getAttributeName8(size_t idx, size_t* outLen) const
@@ -1116,7 +1117,7 @@ const uint16_t* ResXMLParser::getAttributeStringValue(size_t idx, size_t* outLen
 {
     int32_t id = getAttributeValueStringID(idx);
     //XML_NOISY(printf("getAttributeValue 0x%x=0x%x\n", idx, id));
-    return id >= 0 ? mTree.mStrings.stringAt(id, outLen) : NULL;
+    return id >= 0 ? (const uint16_t*)mTree.mStrings.stringAt(id, outLen) : NULL;
 }
 
 int32_t ResXMLParser::getAttributeDataType(size_t idx) const
@@ -1181,63 +1182,21 @@ ssize_t ResXMLParser::indexOfAttribute(const char16_t* ns, size_t nsLen,
             return NAME_NOT_FOUND;
         }
         const size_t N = getAttributeCount();
-        if (mTree.mStrings.isUTF8()) {
-            String8 ns8, attr8;
-            if (ns != NULL) {
-                ns8 = String8(ns, nsLen);
-            }
-            attr8 = String8(attr, attrLen);
-            STRING_POOL_NOISY(ALOGI("indexOfAttribute UTF8 %s (%d) / %s (%d)", ns8.string(), nsLen,
-                    attr8.string(), attrLen));
-            for (size_t i=0; i<N; i++) {
-                size_t curNsLen = 0, curAttrLen = 0;
-                const char* curNs = getAttributeNamespace8(i, &curNsLen);
-                const char* curAttr = getAttributeName8(i, &curAttrLen);
-                STRING_POOL_NOISY(ALOGI("  curNs=%s (%d), curAttr=%s (%d)", curNs, curNsLen,
-                        curAttr, curAttrLen));
-                if (curAttr != NULL && curNsLen == nsLen && curAttrLen == attrLen
-                        && memcmp(attr8.string(), curAttr, attrLen) == 0) {
-                    if (ns == NULL) {
-                        if (curNs == NULL) {
-                            STRING_POOL_NOISY(ALOGI("  FOUND!"));
-                            return i;
-                        }
-                    } else if (curNs != NULL) {
-                        //printf(" --> ns=%s, curNs=%s\n",
-                        //       String8(ns).string(), String8(curNs).string());
-                        if (memcmp(ns8.string(), curNs, nsLen) == 0) {
-                            STRING_POOL_NOISY(ALOGI("  FOUND!"));
-                            return i;
-                        }
-                    }
-                }
-            }
-        } else {
-            STRING_POOL_NOISY(ALOGI("indexOfAttribute UTF16 %s (%d) / %s (%d)",
-                    String8(ns, nsLen).string(), nsLen,
-                    String8(attr, attrLen).string(), attrLen));
-            for (size_t i=0; i<N; i++) {
-                size_t curNsLen = 0, curAttrLen = 0;
-                const char16_t* curNs = getAttributeNamespace(i, &curNsLen);
-                const char16_t* curAttr = getAttributeName(i, &curAttrLen);
-                STRING_POOL_NOISY(ALOGI("  curNs=%s (%d), curAttr=%s (%d)",
-                        String8(curNs, curNsLen).string(), curNsLen,
-                        String8(curAttr, curAttrLen).string(), curAttrLen));
-                if (curAttr != NULL && curNsLen == nsLen && curAttrLen == attrLen
-                        && (memcmp(attr, curAttr, attrLen*sizeof(char16_t)) == 0)) {
-                    if (ns == NULL) {
-                        if (curNs == NULL) {
-                            STRING_POOL_NOISY(ALOGI("  FOUND!"));
-                            return i;
-                        }
-                    } else if (curNs != NULL) {
-                        //printf(" --> ns=%s, curNs=%s\n",
-                        //       String8(ns).string(), String8(curNs).string());
-                        if (memcmp(ns, curNs, nsLen*sizeof(char16_t)) == 0) {
-                            STRING_POOL_NOISY(ALOGI("  FOUND!"));
-                            return i;
-                        }
-                    }
+        for (size_t i=0; i<N; i++) {
+            size_t curNsLen, curAttrLen;
+            const char16_t* curNs = (const char16_t*)getAttributeNamespace(i, &curNsLen);
+            const char16_t* curAttr = (const char16_t*)getAttributeName(i, &curAttrLen);
+            //printf("%d: ns=%p attr=%p curNs=%p curAttr=%p\n",
+            //       i, ns, attr, curNs, curAttr);
+            //printf(" --> attr=%s, curAttr=%s\n",
+            //       String8(attr).string(), String8(curAttr).string());
+            if (attr && curAttr && (strzcmp16(attr, attrLen, curAttr, curAttrLen) == 0)) {
+                if (ns == NULL) {
+                    if (curNs == NULL) return i;
+                } else if (curNs != NULL) {
+                    //printf(" --> ns=%s, curNs=%s\n",
+                    //       String8(ns).string(), String8(curNs).string());
+                    if (strzcmp16(ns, nsLen, curNs, curNsLen) == 0) return i;
                 }
             }
         }
@@ -1620,7 +1579,7 @@ int ResTable_config::compare(const ResTable_config& o) const {
     if (diff != 0) return diff;
     diff = (int32_t)(screenLayout - o.screenLayout);
     if (diff != 0) return diff;
-    diff = (int32_t)(uiInvertedMode - o.uiInvertedMode);
+    diff = (int32_t)(uiThemeMode - o.uiThemeMode);
     if (diff != 0) return diff;
     diff = (int32_t)(uiMode - o.uiMode);
     if (diff != 0) return diff;
@@ -1682,8 +1641,8 @@ int ResTable_config::compareLogical(const ResTable_config& o) const {
     if (screenLayout != o.screenLayout) {
         return screenLayout < o.screenLayout ? -1 : 1;
     }
-    if (uiInvertedMode != o.uiInvertedMode) {
-        return uiInvertedMode < o.uiInvertedMode ? -1 : 1;
+    if (uiThemeMode != o.uiThemeMode) {
+        return uiThemeMode < o.uiThemeMode ? -1 : 1;
     }
     if (uiMode != o.uiMode) {
         return uiMode < o.uiMode ? -1 : 1;
@@ -1710,7 +1669,7 @@ int ResTable_config::diff(const ResTable_config& o) const {
     if (version != o.version) diffs |= CONFIG_VERSION;
     if ((screenLayout & MASK_LAYOUTDIR) != (o.screenLayout & MASK_LAYOUTDIR)) diffs |= CONFIG_LAYOUTDIR;
     if ((screenLayout & ~MASK_LAYOUTDIR) != (o.screenLayout & ~MASK_LAYOUTDIR)) diffs |= CONFIG_SCREEN_LAYOUT;
-    if (uiInvertedMode != o.uiInvertedMode) diffs |= CONFIG_UI_INVERTED_MODE;
+    if (uiThemeMode != o.uiThemeMode) diffs |= CONFIG_UI_THEME_MODE;
     if (uiMode != o.uiMode) diffs |= CONFIG_UI_MODE;
     if (smallestScreenWidthDp != o.smallestScreenWidthDp) diffs |= CONFIG_SMALLEST_SCREEN_SIZE;
     if (screenSizeDp != o.screenSizeDp) diffs |= CONFIG_SCREEN_SIZE;
@@ -1787,9 +1746,9 @@ bool ResTable_config::isMoreSpecificThan(const ResTable_config& o) const {
         if (!o.orientation) return true;
     }
 
-    if (uiInvertedMode != o.uiInvertedMode) {
-        if (!uiInvertedMode) return false;
-        if (!o.uiInvertedMode) return true;
+    if (uiThemeMode != o.uiThemeMode) {
+        if (!uiThemeMode) return false;
+        if (!o.uiThemeMode) return true;
     }
 
     if (uiMode || o.uiMode) {
@@ -1964,8 +1923,8 @@ bool ResTable_config::isBetterThan(const ResTable_config& o,
             return (orientation);
         }
 
-        if (uiInvertedMode != o.uiInvertedMode && requested->uiInvertedMode) {
-            return (uiInvertedMode);
+        if (uiThemeMode != o.uiThemeMode && requested->uiThemeMode) {
+            return (uiThemeMode);
         }
 
         if (uiMode || o.uiMode) {
@@ -2137,11 +2096,7 @@ bool ResTable_config::match(const ResTable_config& settings) const {
         if (screenLong != 0 && screenLong != setScreenLong) {
             return false;
         }
-    }
-    if (uiInvertedMode != 0 && uiInvertedMode != settings.uiInvertedMode) {
-        return false;
-    }
-    if (screenConfig != 0) {
+
         const int uiModeType = uiMode&MASK_UI_MODE_TYPE;
         const int setUiModeType = settings.uiMode&MASK_UI_MODE_TYPE;
         if (uiModeType != 0 && uiModeType != setUiModeType) {
@@ -2177,6 +2132,9 @@ bool ResTable_config::match(const ResTable_config& settings) const {
         if (touchscreen != 0 && touchscreen != settings.touchscreen) {
             return false;
         }
+    }
+    if (uiThemeMode != 0 && uiThemeMode != settings.uiThemeMode) {
+        return false;
     }
     if (input != 0) {
         const int keysHidden = inputFlags&MASK_KEYSHIDDEN;
@@ -2334,17 +2292,17 @@ String8 ResTable_config::toString() const {
                 break;
         }
     }
-    if (uiInvertedMode != UI_INVERTED_MODE_ANY) {
+    if (uiThemeMode != UI_THEME_MODE_ANY) {
         if (res.size() > 0) res.append("-");
-        switch (uiInvertedMode) {
-            case ResTable_config::UI_INVERTED_MODE_YES:
-                res.append("inverted");
+        switch (uiThemeMode) {
+            case ResTable_config::UI_THEME_MODE_HOLO_DARK:
+                res.append("holodark");
                 break;
-            case ResTable_config::UI_INVERTED_MODE_NO:
-                res.append("notinverted");
+            case ResTable_config::UI_THEME_MODE_HOLO_LIGHT:
+                res.append("hololight");
                 break;
             default:
-                res.appendFormat("uiInvertedMode=%d", dtohs(uiInvertedMode));
+                res.appendFormat("uiThemeMode=%d", dtohs(uiThemeMode));
                 break;
         }
     }
@@ -4035,7 +3993,7 @@ bool ResTable::expandResourceRef(const uint16_t* refStr, size_t refLen,
 {
     const char16_t* packageEnd = NULL;
     const char16_t* typeEnd = NULL;
-    const char16_t* p = refStr;
+    const char16_t* p = (const char16_t*)refStr;
     const char16_t* const end = p + refLen;
     while (p < end) {
         if (*p == ':') packageEnd = p;
@@ -4045,7 +4003,7 @@ bool ResTable::expandResourceRef(const uint16_t* refStr, size_t refLen,
         }
         p++;
     }
-    p = refStr;
+    p = (char16_t*)refStr;
     if (*p == '@') p++;
 
     if (outPublicOnly != NULL) {
@@ -4324,7 +4282,7 @@ bool ResTable::stringToFloat(const char16_t* s, size_t len, Res_value* outValue)
     if (*end == 0) {
         if (outValue) {
             outValue->dataType = outValue->TYPE_FLOAT;
-            *(float*)(&outValue->data) = f;
+            memcpy(&outValue->data, &f, sizeof(float)); // *(float*)(&outValue->data) = f;
             return true;
         }
     }
@@ -4444,7 +4402,7 @@ bool ResTable::stringToValue(Res_value* outValue, String16* outString,
                 resourceNameLen = len - 1;
             }
             String16 package, type, name;
-            if (!expandResourceRef(resourceRefName,resourceNameLen, &package, &type, &name,
+            if (!expandResourceRef((const uint16_t*)resourceRefName,resourceNameLen, &package, &type, &name,
                                    defType, defPackage, &errorMsg)) {
                 if (accessor != NULL) {
                     accessor->reportError(accessorCookie, errorMsg);
@@ -4594,7 +4552,7 @@ bool ResTable::stringToValue(Res_value* outValue, String16* outString,
 
         static const String16 attr16("attr");
         String16 package, type, name;
-        if (!expandResourceRef(s+1, len-1, &package, &type, &name,
+        if (!expandResourceRef((const uint16_t*)s+1, len-1, &package, &type, &name,
                                &attr16, defPackage, &errorMsg)) {
             if (accessor != NULL) {
                 accessor->reportError(accessorCookie, errorMsg);
@@ -5284,7 +5242,7 @@ status_t ResTable::parsePackage(ResTable_package* const pkg,
             idx = mPackageGroups.size()+1;
 
             char16_t tmpName[sizeof(pkg->name)/sizeof(char16_t)];
-            strcpy16_dtoh(tmpName, pkg->name, sizeof(pkg->name)/sizeof(char16_t));
+            strcpy16_dtoh((uint16_t*)tmpName, (const uint16_t*)pkg->name, sizeof(pkg->name)/sizeof(char16_t));
             group = new PackageGroup(this, String16(tmpName), id);
             if (group == NULL) {
                 delete package;
@@ -5760,9 +5718,9 @@ void ResTable::removeAssetsByCookie(const String8 &packageName, void* cookie)
 bool ResTable::isResTypeAllowed(const char* type) const
 {
     if (type == NULL) return false;
-    const char* allowedResources[] = { "color", "dimen", "drawable", "mipmap", "style" };
+    const char* allowedResources[] = { "color", "dimen", "drawable", "mipmap", "style", "anim" };
     // ALLOWED_RESOURCE_COUNT should match the number of elements in allowedResources
-    const uint32_t ALLOWED_RESOURCE_COUNT = 5;
+    const uint32_t ALLOWED_RESOURCE_COUNT = 6;
     for (int i = 0; i < ALLOWED_RESOURCE_COUNT; i++) {
         if (strstr(type, allowedResources[i]) != NULL) return true;
     }
@@ -5865,7 +5823,9 @@ void ResTable::print_value(const Package* pkg, const Res_value& value) const
             }
         } 
     } else if (value.dataType == Res_value::TYPE_FLOAT) {
-        printf("(float) %g\n", *(const float*)&value.data);
+        float f;
+        memcpy(&f, &value.data, sizeof(float));
+        printf("(float) %g\n", f);
     } else if (value.dataType == Res_value::TYPE_DIMENSION) {
         printf("(dimension) ");
         print_complex(value.data, false);

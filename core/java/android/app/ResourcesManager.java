@@ -200,6 +200,12 @@ public class ResourcesManager {
             return null;
         }
 
+        if (overlayDirs != null) {
+            for (String idmapPath : overlayDirs) {
+                assets.addOverlayPath(idmapPath);
+            }
+        }
+
         //Slog.i(TAG, "Resource: key=" + key + ", display metrics=" + metrics);
         DisplayMetrics dm = getDisplayMetricsLocked(displayId);
         Configuration config;

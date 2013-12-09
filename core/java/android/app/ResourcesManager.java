@@ -18,8 +18,6 @@ package android.app;
 
 import static android.app.ActivityThread.DEBUG_CONFIGURATION;
 
-import com.android.internal.app.IAssetRedirectionManager;
-
 import android.content.Context;
 import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
@@ -31,8 +29,8 @@ import android.content.pm.ThemeUtils;
 import android.content.res.AssetManager;
 import android.content.res.CompatibilityInfo;
 import android.content.res.Configuration;
-import android.content.res.PackageRedirectionMap;
 import android.content.res.ThemeConfig;
+import android.content.res.CustomTheme;
 import android.content.res.Resources;
 import android.content.res.ResourcesKey;
 import android.hardware.display.DisplayManagerGlobal;
@@ -67,7 +65,6 @@ public class ResourcesManager {
             = new ArrayMap<DisplayAdjustments, DisplayMetrics>();
 
     CompatibilityInfo mResCompatibilityInfo;
-    static IAssetRedirectionManager sAssetRedirectionManager;
     static IPackageManager sPackageManager;
 
     Configuration mResConfiguration;
@@ -236,6 +233,9 @@ public class ResourcesManager {
                 attachThemeAssets(assets, config.themeConfig);
                 attachCommonAssets(assets, config.themeConfig);
                 iconsAttached = attachIconAssets(assets, config.themeConfig);
+            }
+            if (config.customTheme != null) {
+                attachThemeAssets(assets, config.customTheme);
             }
         }
 
@@ -431,6 +431,8 @@ public class ResourcesManager {
                             if (attachIconAssets(am, config.themeConfig)) {
                                 setActivityIcons(r);
                             }
+                        if (config.customTheme != null) {
+                            attachThemeAssets(am, config.customTheme);
                         }
                     }
                 }
@@ -692,5 +694,6 @@ public class ResourcesManager {
         }
         assets.getThemeCookies().clear();
         assets.setThemePackageName(null);
+        return changes != 0;
     }
 }

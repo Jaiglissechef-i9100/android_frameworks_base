@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+/*
+** Copyright 2013, The ChameleonOS Open Source Project
+**
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+**
+**     http://www.apache.org/licenses/LICENSE-2.0
+**
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
+*/
+-->
+<resources>
+
+    <!-- Quick Nav Panel -->
+    <color name="qcMenuBackground">#C0000000</color>
+    <color name="qc_tab_nr">#F033B5E5</color>
+
+    <!-- THEMEABLE PIE PIE PIE PIE PIE? -->
+
+    <color name="pie_menu_background">#C0000000</color>
+
+    <color name="alpha_mask">#aa000000</color>
+    <color name="opaque_mask">#ff000000</color>
+    <color name="snap_background">#ffffffff</color>
+    <color name="pie_background">#aa000000</color>
+    <color name="pie_button">#b2ffffff</color>
+    <color name="pie_select">#aaffffff</color>
+    <color name="pie_outlines">#ffffffff</color>
+    <color name="chevron_left">#0999cc</color>
+    <color name="chevron_right">#53d5e5</color>
+    <color name="battery_juice">#33b5e5</color>
+    <color name="battery_juice_low">#ffbb33</color>
+    <color name="battery_juice_critical">#ff4444</color>
+    <color name="battery_background">#ffffff</color>
+    <color name="status">#ffffff</color>
+
+    <!-- THEMEABLE PIE PIE PIE PIE PIE? -->
+
+</resources>

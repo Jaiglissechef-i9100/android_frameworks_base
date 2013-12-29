@@ -249,6 +249,10 @@ ifeq ($(USE_OPENGL_RENDERER),true)
 	LOCAL_SHARED_LIBRARIES += libhwui
 endif
 
+ifneq ($(DEBUG_FORCE_STRICT_ALASING),true)
+	LOCAL_CFLAGS += -fno-strict-aliasing
+endif
+
 LOCAL_SHARED_LIBRARIES += \
 	libdl
 # we need to access the private Bionic header

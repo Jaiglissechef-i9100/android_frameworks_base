@@ -49,15 +49,20 @@
   <!-- Config Power Menu -->
   <java-symbol type="drawable" name="ic_lock_reboot" />
   <java-symbol type="drawable" name="ic_lock_screenshot" />
+  <java-symbol type="drawable" name="ic_lock_screenrecord" />
   <java-symbol type="string" name="global_action_reboot" />
   <java-symbol type="string" name="global_actions" />
   <java-symbol type="string" name="global_action_screenshot" />
+  <java-symbol type="string" name="global_action_screenrecord" />
 
   <java-symbol type="array" name="shutdown_reboot_actions" />
   <java-symbol type="array" name="shutdown_reboot_options" />
 
   <java-symbol type="string" name="reboot_progress" />
   <java-symbol type="string" name="reboot_system" />
+
+  <!-- Config IME switcher -->
+  <java-symbol type="bool" name="config_show_IMESwitcher" />
 
   <!-- Power menu -->
   <java-symbol type="color"  name="power_menu_icon_default_color" />
@@ -96,4 +101,7 @@
   <!-- Description of accessibility unlock target -->
   <java-symbol type="string" name="description_target_unlock" />
   
+  <!-- Statusbar double tap gesture -->
+  <java-symbol type="bool" name="config_disableDoubleTapSleepGesture" />
+
 </resources>

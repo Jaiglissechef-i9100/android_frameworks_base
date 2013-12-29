@@ -65,6 +65,7 @@ import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.Manifest;
 import android.view.WindowManagerPolicy.WindowManagerFuncs;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -251,35 +252,6 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
 	final ContentResolver cr = mContext.getContentResolver();
 
-        // CyanogenMod profiles
-	// next: profile
-        // only shown if both system profiles and the menu item is enabled, enabled by default
-        boolean showProfiles =
-                Settings.System.getIntForUser(cr,
-                        Settings.System.SYSTEM_PROFILES_ENABLED, 1, UserHandle.USER_CURRENT) == 1
-                && Settings.System.getIntForUser(cr,
-                        Settings.System.POWER_MENU_PROFILES_ENABLED, 1, UserHandle.USER_CURRENT) == 1;
-        if (showProfiles) {
-            mItems.add(
-                new ProfileChooseAction() {
-                    public void onPress() {
-                        createProfileDialog();
-                    }
-
-                    public boolean onLongPress() {
-                        return true;
-                    }
-
-                    public boolean showDuringKeyguard() {
-                        return false;
-                    }
-
-                    public boolean showBeforeProvisioning() {
-                        return false;
-                    }
-                });
-        }
-
         // bug report, if enabled
         if (Settings.Global.getInt(mContext.getContentResolver(),
                 Settings.Global.BUGREPORT_IN_POWER_MENU, 0) != 0 && isCurrentUserOwner()) {
@@ -391,6 +363,48 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                             return true;
                         }
                     });
+
+	    // next: screenrecord
+            } else if (config.getClickAction().equals(PolicyConstants.ACTION_SCREENRECORD)) {
+            mItems.add(
+                    new SinglePressAction(PolicyHelper.getPowerMenuIconImage(mContext,
+                            config.getClickAction(), config.getIcon(), true),
+                            config.getClickActionDescription()) {
+                    public void onPress() {
+                        toggleScreenRecord();
+                    }
+
+                    public boolean showDuringKeyguard() {
+                        return true;
+                    }
+
+                    public boolean showBeforeProvisioning() {
+                        return true;
+                    }
+                });
+
+        // CyanogenMod profiles
+	} else if (config.getClickAction().equals(PolicyConstants.ACTION_PROFILE)) {
+            mItems.add(
+                    new SinglePressAction(PolicyHelper.getPowerMenuIconImage(mContext,
+                            config.getClickAction(), config.getIcon(), true),
+                            config.getClickActionDescription()) {
+                    public void onPress() {
+                        createProfileDialog();
+                    }
+
+                    public boolean onLongPress() {
+                        return true;
+                    }
+
+                    public boolean showDuringKeyguard() {
+                        return false;
+                    }
+
+                    public boolean showBeforeProvisioning() {
+                        return false;
+                    }
+                });
             // airplane mode
             } else if (config.getClickAction().equals(PolicyConstants.ACTION_AIRPLANE)) {
                 constructAirPlaneModeToggle(PolicyHelper.getPowerMenuIconImage(mContext,
@@ -609,6 +623,11 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 }).create();
         dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_DIALOG);
         dialog.show();
+    }
+
+    private void toggleScreenRecord() {
+        final Intent recordIntent = new Intent("org.chameleonos.action.NOTIFY_RECORD_SERVICE");
+        mContext.sendBroadcast(recordIntent, Manifest.permission.RECORD_SCREEN);
     }
 
     private void prepareDialog() {
@@ -830,46 +849,6 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 messageView.setText(mMessageResId);
             }
             messageView.setTextColor(mTextColor);
-
-            return v;
-        }
-    }
-
-    /**
-     * A single press action maintains no state, just responds to a press
-     * and takes an action.
-     */
-    private abstract class ProfileChooseAction implements Action {
-        private ProfileManager mProfileManager;
-
-        protected ProfileChooseAction() {
-            mProfileManager = (ProfileManager)mContext.getSystemService(Context.PROFILE_SERVICE);
-        }
-
-        public boolean isEnabled() {
-            return true;
-        }
-
-        abstract public void onPress();
-
-        public View create(Context context, View convertView, ViewGroup parent, LayoutInflater inflater) {
-            View v = inflater.inflate(R.layout.global_actions_item, parent, false);
-
-            ImageView icon = (ImageView) v.findViewById(R.id.icon);
-            TextView messageView = (TextView) v.findViewById(R.id.message);
-            TextView statusView = (TextView) v.findViewById(R.id.status);
-            if (statusView != null) {
-                statusView.setVisibility(View.VISIBLE);
-                statusView.setText(mProfileManager.getActiveProfile().getName());
-            }
-
-            if (icon != null) {
-                icon.setImageDrawable(context.getResources().getDrawable(R.drawable.ic_lock_profile));
-            }
-
-            if (messageView != null) {
-                messageView.setText(R.string.global_action_choose_profile);
-            }
 
             return v;
         }

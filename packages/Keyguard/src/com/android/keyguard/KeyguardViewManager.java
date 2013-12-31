@@ -161,15 +161,16 @@ public class KeyguardViewManager {
     	if(!mBlurEnabled) {
     		mCustomBackground = null;
     	}
+
         mLockscreenNotifications = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.LOCKSCREEN_NOTIFICATIONS, mLockscreenNotifications ? 1 : 0) == 1;
-        if(!mSeeThrough) mCustomBackground = null;
-        if(mLockscreenNotifications && mNotificationViewManager == null) {
+        if (!mSeeThrough) mCustomBackground = null;
+	    if (mLockscreenNotifications && mNotificationViewManager == null) {
             mNotificationViewManager = new NotificationViewManager(mContext, this);
-        } else if(!mLockscreenNotifications && mNotificationViewManager != null) {
+        } else if (!mLockscreenNotifications && mNotificationViewManager != null) {
             mNotificationViewManager.unregisterListeners();
             mNotificationViewManager = null;
-        }
+    	}
     }
 
     /**
@@ -503,11 +504,11 @@ public class KeyguardViewManager {
         mKeyguardView.initializeSwitchingUserState(options != null &&
                 options.getBoolean(IS_SWITCHING_USER));
 
-	if (mLockscreenNotifications) {
-            mNotificationView = (NotificationHostView)mKeyguardView.findViewById(R.id.notification_host_view);
-            mNotificationViewManager.setHostView(mNotificationView);
+    	if (mLockscreenNotifications) {
+	    mNotificationView = (NotificationHostView)mKeyguardView.findViewById(R.id.notification_host_view);
+	    mNotificationViewManager.setHostView(mNotificationView);
 	    mNotificationViewManager.onScreenTurnedOff();
-        }
+    	}
 
         // HACK
         // The keyguard view will have set up window flags in onFinishInflate before we set
@@ -613,7 +614,7 @@ public class KeyguardViewManager {
         if (mKeyguardView != null) {
             mKeyguardView.onScreenTurnedOff();
         }
-	if (mLockscreenNotifications) {
+        if (mLockscreenNotifications) {
             mNotificationViewManager.onScreenTurnedOff();
         }
     }
@@ -622,9 +623,9 @@ public class KeyguardViewManager {
         if (DEBUG) Log.d(TAG, "onScreenTurnedOn()");
         mScreenOn = true;
 
-	if (mLockscreenNotifications) {
+        if (mLockscreenNotifications) {
             mNotificationViewManager.onScreenTurnedOn();
-	}
+        }
 
         // If keyguard is not showing, we need to inform PhoneWindowManager with a null
         // token so it doesn't wait for us to draw...

@@ -164,10 +164,10 @@ public class KeyguardViewManager {
 
         mLockscreenNotifications = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.LOCKSCREEN_NOTIFICATIONS, mLockscreenNotifications ? 1 : 0) == 1;
-        if (!mSeeThrough) mCustomBackground = null;
+    	if (!mSeeThrough) mCustomBackground = null;
 	    if (mLockscreenNotifications && mNotificationViewManager == null) {
-            mNotificationViewManager = new NotificationViewManager(mContext, this);
-        } else if (!mLockscreenNotifications && mNotificationViewManager != null) {
+    		mNotificationViewManager = new NotificationViewManager(mContext, this);
+    	} else if (!mLockscreenNotifications && mNotificationViewManager != null) {
             mNotificationViewManager.unregisterListeners();
             mNotificationViewManager = null;
     	}
@@ -504,17 +504,17 @@ public class KeyguardViewManager {
         mKeyguardView.initializeSwitchingUserState(options != null &&
                 options.getBoolean(IS_SWITCHING_USER));
 
-    	if (mLockscreenNotifications) {
-	    mNotificationView = (NotificationHostView)mKeyguardView.findViewById(R.id.notification_host_view);
-	    mNotificationViewManager.setHostView(mNotificationView);
-	    mNotificationViewManager.onScreenTurnedOff();
-    	}
+        if (mLockscreenNotifications) {
+            mNotificationView = (NotificationHostView)mKeyguardView.findViewById(R.id.notification_host_view);
+            mNotificationViewManager.setHostView(mNotificationView);
+            mNotificationViewManager.onScreenTurnedOff();
+        }
 
         // HACK
         // The keyguard view will have set up window flags in onFinishInflate before we set
         // the view mediator callback. Make sure it knows the correct IME state.
         if (mViewMediatorCallback != null) {
-	    if (mLockscreenNotifications)
+            if (mLockscreenNotifications)
                 mNotificationView.setViewMediator(mViewMediatorCallback);
 
             KeyguardPasswordView kpv = (KeyguardPasswordView) mKeyguardView.findViewById(
@@ -623,10 +623,6 @@ public class KeyguardViewManager {
         if (DEBUG) Log.d(TAG, "onScreenTurnedOn()");
         mScreenOn = true;
 
-        if (mLockscreenNotifications) {
-            mNotificationViewManager.onScreenTurnedOn();
-        }
-
         // If keyguard is not showing, we need to inform PhoneWindowManager with a null
         // token so it doesn't wait for us to draw...
         final IBinder token = isShowing() ? mKeyguardHost.getWindowToken() : null;
@@ -642,7 +638,7 @@ public class KeyguardViewManager {
             if (callback != null) {
                 if (mKeyguardHost.getVisibility() == View.VISIBLE) {
                     // Keyguard may be in the process of being shown, but not yet
-                    // updated with the window manager...  give it a chance to do so.
+                    // updated with the window manager... give it a chance to do so.
                     mKeyguardHost.post(new Runnable() {
                         @Override
                         public void run() {
@@ -668,6 +664,10 @@ public class KeyguardViewManager {
                 Slog.w(TAG, "Exception calling onShown():", e);
             }
         }
+
+        if (mLockscreenNotifications) {
+            mNotificationViewManager.onScreenTurnedOn();
+        }
     }
 
     public synchronized void verifyUnlock() {
@@ -682,7 +682,7 @@ public class KeyguardViewManager {
     public synchronized void hide() {
         if (DEBUG) Log.d(TAG, "hide()");
 
-	if (mLockscreenNotifications) {
+        if (mLockscreenNotifications) {
             mNotificationViewManager.onDismiss();
         }
 

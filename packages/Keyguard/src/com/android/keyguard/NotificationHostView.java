@@ -226,7 +226,7 @@ public class NotificationHostView extends FrameLayout {
                         }
                         if (mShownNotifications == 0 || (shown && mShownNotifications == 1))
                             NotificationHostView.this.setBackgroundColor(Color.argb(MAX_ALPHA - (int)(Math.abs(x) / v.getWidth() * MAX_ALPHA), 0, 0, 0));
-                        if (swipeGesture  || Math.abs(event.getX() - initialX) > CLICK_THRESHOLD) {
+                        if (swipeGesture || Math.abs(event.getX() - initialX) > CLICK_THRESHOLD) {
                             swipeGesture = true;
                             preventClick = true;
                             v.cancelPendingInputEvents();
@@ -450,7 +450,7 @@ public class NotificationHostView extends FrameLayout {
             if (!sbn.isClearable()) {
                 mDismissedNotifications.put(describeNotification(sbn), sbn);
             }
-            int duration =  getDurationFromDistance(v.getChildAt(0), v.shown ? -mDisplayWidth : mDisplayWidth, 0);
+            int duration = getDurationFromDistance(v.getChildAt(0), v.shown ? -mDisplayWidth : mDisplayWidth, 0);
             v.getChildAt(0).animate().setDuration(duration).alpha(0).start();
             mNotifications.remove(describeNotification(sbn));
             animateTranslation(v.getChildAt(0), v.shown ? -mDisplayWidth : mDisplayWidth, 0,

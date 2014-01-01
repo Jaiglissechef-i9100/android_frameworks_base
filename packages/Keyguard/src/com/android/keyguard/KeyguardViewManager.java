@@ -104,8 +104,6 @@ public class KeyguardViewManager {
     private SettingsObserver mObserver;
     private boolean isSeeThroughEnabled;
     private boolean mIsCoverflow = false;
-    private int BlurRadius = 14;
-    private boolean mSeeThrough = false;
 
     private NotificationHostView mNotificationView;
     private NotificationViewManager mNotificationViewManager;
@@ -145,8 +143,8 @@ public class KeyguardViewManager {
 
         @Override
         public void onChange(boolean selfChange) {
-            updateSettings();
             setKeyguardParams();
+            updateSettings();
             mViewManager.updateViewLayout(mKeyguardHost, mWindowLayoutParams);
         }
     }
@@ -164,10 +162,10 @@ public class KeyguardViewManager {
 
         mLockscreenNotifications = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.LOCKSCREEN_NOTIFICATIONS, mLockscreenNotifications ? 1 : 0) == 1;
-    	if (!mSeeThrough) mCustomBackground = null;
-	    if (mLockscreenNotifications && mNotificationViewManager == null) {
-    		mNotificationViewManager = new NotificationViewManager(mContext, this);
-    	} else if (!mLockscreenNotifications && mNotificationViewManager != null) {
+
+        if(mLockscreenNotifications && mNotificationViewManager == null) {
+            mNotificationViewManager = new NotificationViewManager(mContext, this);
+        } else if(!mLockscreenNotifications && mNotificationViewManager != null) {
             mNotificationViewManager.unregisterListeners();
             mNotificationViewManager = null;
     	}

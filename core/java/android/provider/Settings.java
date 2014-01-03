@@ -2393,6 +2393,13 @@ public final class Settings {
          * @hide
          */
         public static final String LOCKSCREEN_ROTATION = "lockscreen_rotation";
+        
+        /**
+         * Whether music controls should be shown on the lockscreen if a supporting
+         * music player is active.
+         * @hide
+         */
+        public static final String LOCKSCREEN_MUSIC_CONTROLS = "lockscreen_music_controls";
 
         /**
          * Control the type of rotation which can be performed using the accelerometer
@@ -2689,6 +2696,12 @@ public final class Settings {
          * @hide
          */
         public static final String LOCKSCREEN_SOUNDS_ENABLED = "lockscreen_sounds_enabled";
+
+	/**  
+         * Allows to show the background activity back the lockscreen
+         * @hide
+         */
+        public static final String LOCKSCREEN_SEE_THROUGH = "lockscreen_see_through";
 
         /**
          * Whether the lockscreen should be completely disabled.
@@ -3324,6 +3337,12 @@ public final class Settings {
          * @hide
          */
         public static final String VOLUME_WAKE_SCREEN = "volume_wake_screen";
+
+        /**
+         * Show ram bar in GBs for devices with memory over 1 GB.
+         *  @hide
+         */
+        public static final String SHOW_GB_RAMBAR = "show_gb_rambar";
 
         /**
          * Show clear all recents button
@@ -4089,6 +4108,13 @@ public final class Settings {
          * boolean (1 or 0).
          */
         public static final String DIALER_DIRECT_CALL = "dialer_direct_call";
+
+        /**		
+		 * Allows blurring the lockscreen background
+         * @hide
+         */
+        public static final String LOCKSCREEN_BLUR_BEHIND = "lockscreen_blur_behind";
+        public static final String LOCKSCREEN_BLUR_RADIUS = "lockscreen_blur_radius";
 
         /**
          * Should call status sounds be player

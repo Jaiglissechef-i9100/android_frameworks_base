@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <!-- Title shown in notification popup for launching notification in floating mode -->
+    <string name="status_bar_notification_floating_item_title">Floating mode</string>
+    <string name="status_bar_recent_floating_item_title">Floating mode</string>
+
+</resources>

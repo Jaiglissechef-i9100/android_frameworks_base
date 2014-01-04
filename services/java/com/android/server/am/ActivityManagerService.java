@@ -14284,12 +14284,13 @@ public final class ActivityManagerService extends ActivityManagerNative
             starting = mainStack.topRunningActivityLocked(null);
         }
 
-        if (starting != null) {
-            kept = mainStack.ensureActivityConfigurationLocked(starting, changes);
-            // And we need to make sure at this point that all other activities
-            // are made visible with the correct configuration.
-            mStackSupervisor.ensureActivitiesVisibleLocked(starting, changes);
- 	    
+	if (starting != null) {
+	    kept = mainStack.ensureActivityConfigurationLocked(starting, changes);
+	    // And we need to make sure at this point that all other activities
+	    // are made visible with the correct configuration.
+	    mStackSupervisor.ensureActivitiesVisibleLocked(starting, changes);
+	    
+	    /*
 	    int mHaloEnabled = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.HALO_ENABLED, 0));
 
 	    if(mHaloEnabled != 1){
@@ -14301,19 +14302,19 @@ public final class ActivityManagerService extends ActivityManagerNative
 			    kept = kept && mainStack.ensureActivityConfigurationLocked(second, changes);
 			    mStackSupervisor.ensureActivitiesVisibleLocked(second, changes);
 			    if (mIgnoreSplitViewUpdate.contains(starting.task.taskId)) {
-			        Log.e("XPLOD", "Task "+ starting.task.taskId + " resuming ignored");
-			        mIgnoreSplitViewUpdate.removeAll(Collections.singleton((Integer) starting.task.taskId));
+				Log.e("XPLOD", "Task "+ starting.task.taskId + " resuming ignored");
+				mIgnoreSplitViewUpdate.removeAll(Collections.singleton((Integer) starting.task.taskId));
 			    } else {
-			        moveTaskToFront(second.task.taskId, 0, null);
-			        mIgnoreSplitViewUpdate.add(starting.task.taskId);
-			        mIgnoreSplitViewUpdate.add(second.task.taskId);
-			        mStackSupervisor.resumeTopActivitiesLocked();
-			        moveTaskToFront(starting.task.taskId, 0, null);
+				moveTaskToFront(second.task.taskId, 0, null);
+				mIgnoreSplitViewUpdate.add(starting.task.taskId);
+				mIgnoreSplitViewUpdate.add(second.task.taskId);
+				mStackSupervisor.resumeTopActivitiesLocked();
+				moveTaskToFront(starting.task.taskId, 0, null);
 			    }
 			}
 		    }
-	    }
-        }
+	    }*/
+	}
 
         if (values != null && mWindowManager != null) {
             mWindowManager.setNewConfiguration(mConfiguration);
@@ -15546,9 +15547,31 @@ public final class ActivityManagerService extends ActivityManagerNative
                 reportingProcessState, now);
     }
 
+    private ArrayList<Integer> mIgnoreSplitViewUpdateResume = new ArrayList<Integer>();
+
     private final ActivityRecord resumedAppLocked() {
-        return mStackSupervisor.resumedAppLocked();
+        final ActivityRecord starting = mStackSupervisor.resumedAppLocked();
+
+        final long origId = Binder.clearCallingIdentity();
+
+        if (mSecondTaskToResume >= 0) {
+            moveTaskToFront(mSecondTaskToResume, 0, null);
+            mStackSupervisor.resumeTopActivitiesLocked();
+            mStackSupervisor.ensureActivitiesVisibleLocked(null, 0);
+            mIgnoreSplitViewUpdateResume.add(mSecondTaskToResume);
+
+            if (mIgnoreSplitViewUpdateResume.contains((Integer) starting.task.taskId)) {
+                mSecondTaskToResume = -1;
+            } else {
+                mSecondTaskToResume = starting.task.taskId;
+            }
+        }
+
+        Binder.restoreCallingIdentity(origId);
+
+        return starting;
     }
+
 
     final boolean updateOomAdjLocked(ProcessRecord app) {
         return updateOomAdjLocked(app, false);

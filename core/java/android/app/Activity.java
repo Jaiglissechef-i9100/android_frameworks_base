@@ -40,7 +40,10 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Point;
+<<<<<<< HEAD
 import android.graphics.Rect;
+=======
+>>>>>>> 0eae766... HALO: make windows moveable and scaleable [WIP]
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.net.Uri;

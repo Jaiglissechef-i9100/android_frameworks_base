@@ -179,6 +179,7 @@ public class NotificationViewManager {
                         && (!sbn.isOngoing() || !mHostView.containsNotification(sbn))
                         && !QuietHoursHelper.inQuietHours(mContext, Settings.System.QUIET_HOURS_DIM)) {
                 wakeDevice();
+                mHostView.showAllNotifications();
             }
         }
         @Override

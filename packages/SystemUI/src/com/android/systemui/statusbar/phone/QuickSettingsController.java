@@ -16,6 +16,7 @@
 
 package com.android.systemui.statusbar.phone;
 
+<<<<<<< HEAD
 import static com.android.internal.util.beanstalk.QSConstants.TILES_DEFAULT;
 import static com.android.internal.util.beanstalk.QSConstants.DYNAMIC_TILES_DEFAULT;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_AIRPLANE;
@@ -40,6 +41,7 @@ import static com.android.internal.util.beanstalk.QSConstants.TILE_MOBILEDATA;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_MUSIC;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_NETWORKMODE;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_NFC;
+import static com.android.internal.util.beanstalk.QSConstants.TILE_PAPIE;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_QUICKRECORD;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_QUIETHOURS;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_RINGER;
@@ -92,6 +94,7 @@ import com.android.systemui.quicksettings.MobileNetworkTile;
 import com.android.systemui.quicksettings.MobileNetworkTypeTile;
 import com.android.systemui.quicksettings.MusicTile;
 import com.android.systemui.quicksettings.NfcTile;
+import com.android.systemui.quicksettings.PaPieTile;
 import com.android.systemui.quicksettings.PreferencesTile;
 import com.android.systemui.quicksettings.QuickSettingsTile;
 import com.android.systemui.quicksettings.QuickRecordTile;
@@ -256,6 +259,8 @@ public class QuickSettingsController {
                 qs = new ExpandedDesktopTile(mContext, this);
             } else if (tile.equals(TILE_MUSIC)) {
                 qs = new MusicTile(mContext, this);
+            } else if (tile.equals(TILE_PAPIE)) {
+                qs = new PaPieTile(mContext, this);
             } else if (tile.equals(TILE_REBOOT)) {
                 qs = new RebootTile(mContext, this);
             } else if (tile.equals(TILE_QUICKRECORD)) {

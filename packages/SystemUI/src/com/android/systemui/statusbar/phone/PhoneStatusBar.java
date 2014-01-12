@@ -20,10 +20,10 @@ import static android.app.StatusBarManager.NAVIGATION_HINT_BACK_ALT;
 import static android.app.StatusBarManager.WINDOW_STATE_HIDDEN;
 import static android.app.StatusBarManager.WINDOW_STATE_SHOWING;
 import static android.app.StatusBarManager.windowStateToString;
+import static com.android.systemui.statusbar.phone.BarTransitions.MODE_LIGHTS_OUT;
 import static com.android.systemui.statusbar.phone.BarTransitions.MODE_OPAQUE;
 import static com.android.systemui.statusbar.phone.BarTransitions.MODE_SEMI_TRANSPARENT;
 import static com.android.systemui.statusbar.phone.BarTransitions.MODE_TRANSLUCENT;
-import static com.android.systemui.statusbar.phone.BarTransitions.MODE_LIGHTS_OUT;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -58,6 +58,7 @@ import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.TransitionDrawable;
 import android.inputmethodservice.InputMethodService;
 import android.net.Uri;
@@ -153,6 +154,10 @@ import com.android.systemui.omni.StatusHeaderMachine;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
 import java.lang.StringBuilder;
+
+import com.android.systemui.statusbar.policy.RotationLockController;
+
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
@@ -933,7 +938,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         return split;
     }
 
-<<<<<<< HEAD
     private boolean acceptableLength(String input, int maxWidth) {
         mTextHolder.setText(input);
         mTextHolder.measure(0, 0);
@@ -1045,16 +1049,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 .getDefaultDisplay();
         updateDisplaySize();
 
-<<<<<<< HEAD
         mLocationController = new LocationController(mContext); // will post a notification
-=======
+
         ThemeConfig currentTheme = mContext.getResources().getConfiguration().themeConfig;
         if (currentTheme != null) {
             mCurrentTheme = (ThemeConfig)currentTheme.clone();
         }
 
-        mLocationController = new LocationController(mContext);
->>>>>>> 8a07476... Modify config to support app specific themes [1/4]
         mBatteryController = new BatteryController(mContext);
         mNetworkController = new NetworkController(mContext);
         mBluetoothController = new BluetoothController(mContext);
@@ -4192,8 +4193,23 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private View.OnClickListener mClockClickListener = new View.OnClickListener() {
         public void onClick(View v) {
-            startActivityDismissingKeyguard(
-                    new Intent(AlarmClock.ACTION_SHOW_ALARMS), true);
+            Intent clockShortcutIntent = null;
+            String clockShortcutIntentUri = Settings.System.getStringForUser(
+                    mContext.getContentResolver(), Settings.System.CLOCK_SHORTCUT, UserHandle.USER_CURRENT);
+            if(clockShortcutIntentUri != null) {
+                try {
+                    clockShortcutIntent = Intent.parseUri(clockShortcutIntentUri, 0);
+                } catch (URISyntaxException e) {
+                    clockShortcutIntent = null;
+                }
+            }
+
+            if(clockShortcutIntent != null) {
+                startActivityDismissingKeyguard(clockShortcutIntent, true);
+            } else {
+                startActivityDismissingKeyguard(
+                        new Intent(AlarmClock.ACTION_SHOW_ALARMS), true); // have fun, everyone
+            }
         }
     };
 
@@ -4208,12 +4224,23 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     private View.OnClickListener mDateClickListener = new View.OnClickListener() {
         public void onClick(View v) {
-            Uri.Builder builder = CalendarContract.CONTENT_URI.buildUpon();
-            builder.appendPath("time");
-            ContentUris.appendId(builder, System.currentTimeMillis());
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(builder.build());
-            startActivityDismissingKeyguard(intent, true);
+            Intent calendarShortcutIntent = null;
+            String calendarShortcutIntentUri = Settings.System.getStringForUser(
+                    mContext.getContentResolver(), Settings.System.CALENDAR_SHORTCUT, UserHandle.USER_CURRENT);
+            if(calendarShortcutIntentUri != null) {
+                try {
+                    calendarShortcutIntent = Intent.parseUri(calendarShortcutIntentUri, 0);
+                } catch (URISyntaxException e) {
+                    calendarShortcutIntent = null;
+                }
+            }
+
+            if(calendarShortcutIntent != null) {
+                startActivityDismissingKeyguard(calendarShortcutIntent, true);
+            } else {
+                Intent intent=Intent.makeMainSelectorActivity(Intent.ACTION_MAIN, Intent.CATEGORY_APP_CALENDAR);
+                startActivityDismissingKeyguard(intent,true);
+            }
         }
     };
 
@@ -4498,12 +4525,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         rebuildRecentsScreen();
 
         addHeadsUpView();
-<<<<<<< HEAD
-=======
+
         if (mNavigationBarView != null) {
             mNavigationBarView.updateResources(getNavbarThemedResources());
         }
->>>>>>> 54b5fbf... Support theming navbar separately from SystemUI
 
         // recreate StatusBarIconViews.
         for (int i = 0; i < nIcons; i++) {

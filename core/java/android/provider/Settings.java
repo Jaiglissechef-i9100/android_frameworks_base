@@ -3185,6 +3185,20 @@ public final class Settings {
 
        /**
          * Animate-flip Quick Settings Panel Tiles on click
+        /**
+         * What application to launch when the user click the clock in the notification bar
+         * @hide
+         */
+        public static final String CLOCK_SHORTCUT = "clock_shortcut";
+
+        /**
+         * What application to launch when the user click the calendar in the notification bar
+         * @hide
+         */
+        public static final String CALENDAR_SHORTCUT = "calendar_shortcut";
+
+        /**
+         * Config for advanced power menu
          *
          * @hide
          */
@@ -5639,15 +5653,12 @@ public final class Settings {
         public static final String HOVER_EXCLUDE_TOPMOST = "hover_exclude_topmost";
 
         /**
-<<<<<<< HEAD
          * Disable ads (HFM)
          * @hide
          */
         public static final String HFM_DISABLE_ADS = "hfm_disable_ads";
 
         /**
-=======
->>>>>>> ec57b29... Add evening time to header
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *

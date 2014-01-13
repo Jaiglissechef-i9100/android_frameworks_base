@@ -16,6 +16,9 @@
     <!-- [CHAR LIMIT=10] Running services, summary of foreground processes -->
     <string name="service_used_mem"><xliff:g id="memory">%1$s</xliff:g> used</string>
 
+    <!-- Screenshot -->
+    <string name="screenshot_delete_confirmation">Screenshot deleted</string>
+
     <!-- Content description of the halo button in the notification panel for accessibility (not sho
          wn on the screen). [CHAR LIMIT=NONE] -->	
     <string name="accessibility_halo">Create notification halo.</string>	
@@ -57,6 +60,7 @@
     <string name="shortcut_reboot">Reboot (instant)</string>
     <string name="shortcut_last_app">Last App</string>
     <string name="shortcut_screenshot">Screenshot</string>
+    <string name="shortcut_screensleep">Sleep Screen</string>
     <string name="shortcut_chamber">Chamber of Secrets</string>
     <string name="chamber_disabled">Chamber of secrets is closed</string>
     <string name="chamber_title">Input Settings string</string>
@@ -114,4 +118,8 @@
     <string name="quick_settings_quick_record_rec">Recording...</string>
     <string name="quick_settings_quick_record_save">Saved</string>
     <string name="quick_settings_quick_record_play">Playing...</string>
+
+    <!-- Label in drop down to identify brightness slider -->
+    <string name="brightness_label">Brightness</string>
+    <string name="powerwidget_screen_timeout_never_toast">Screen set to always on</string>
 </resources>

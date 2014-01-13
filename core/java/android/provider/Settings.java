@@ -2393,13 +2393,6 @@ public final class Settings {
          * @hide
          */
         public static final String LOCKSCREEN_ROTATION = "lockscreen_rotation";
-        
-        /**
-         * Whether music controls should be shown on the lockscreen if a supporting
-         * music player is active.
-         * @hide
-         */
-        public static final String LOCKSCREEN_MUSIC_CONTROLS = "lockscreen_music_controls";
 
         /**
          * Control the type of rotation which can be performed using the accelerometer
@@ -2503,6 +2496,12 @@ public final class Settings {
          * boolean (1 or 0).
          */
         public static final String HAPTIC_FEEDBACK_ENABLED = "haptic_feedback_enabled";
+
+        /**
+         * Minimum vibration duration in milliseconds (0-100ms)
+         * @hide
+         */
+        public static final String MINIMUM_VIBRATION_DURATION = "minimum_vibration_duration";
 
         /**
          * @deprecated Each application that shows web suggestions should have its own
@@ -3000,6 +2999,13 @@ public final class Settings {
          */
         public static final String QUICK_SETTINGS_TILES = "quick_settings_tiles";
 
+       /**
+	* Quick Settings Launch in Floating Window
+	*
+	* @hide
+	*/
+        public static final String QS_FLOATING_WINDOW = "qs_floating_window";
+
         /**
          * Quick Settings Panel Dynamic Tiles
          *
@@ -3404,6 +3410,12 @@ public final class Settings {
          * @hide
          */
         public static final String QUIET_HOURS_END = "quiet_hours_end";
+
+	/**
+         * Configurable LTE or 4G icon - up to per user defined
+         * @hide
+         */
+        public static final String SHOW_LTE_OR_FOURGEE = "show_lte_or_fourgee";
 
         /**
          * Whether to remove the sound from phone ringing during quiet hours.
@@ -4157,6 +4169,111 @@ public final class Settings {
         public static final String ENABLE_FAST_TORCH = "enable_fast_torch";
 
         /**
+         * @hide
+         */
+        public static final String GESTURE_ONE = "gesture_one";
+
+        /**
+         * @hide
+         */
+        public static final String GESTURE_TWO = "gesture_two";
+
+        /**
+         * @hide
+         */
+        public static final String GESTURE_THREE = "gesture_three";
+
+        /**
+         * @hide
+         */
+        public static final String GESTURE_FOUR = "gesture_four";
+
+        /**
+         * @hide
+         */
+        public static final String GESTURE_TYPE_ONE = "gesture_type_one";
+
+        /**
+         * @hide
+         */
+        public static final String GESTURE_TYPE_TWO = "gesture_type_two";
+
+        /**
+         * @hide
+         */
+        public static final String GESTURE_TYPE_THREE = "gesture_type_three";
+
+        /**
+         * @hide
+         */
+        public static final String GESTURE_TYPE_FOUR = "gesture_type_four";
+
+        /**
+         * @hide
+         */
+        public static final String GESTURE_APP_ONE = "gesture_app_one";
+
+        /**
+         * @hide
+         */
+        public static final String GESTURE_APP_TWO = "gesture_app_two";
+
+        /**
+         * @hide
+         */
+        public static final String GESTURE_APP_THREE = "gesture_app_three";
+
+        /**
+         * @hide
+         */
+        public static final String GESTURE_APP_FOUR = "gesture_app_four";
+
+        /**
+         * @hide
+         */
+        public static final String TOUCH_ZONE_ONE = "touch_zone_one";
+
+        /**
+         * @hide
+         */
+        public static final String TOUCH_ZONE_TWO = "touch_zone_two";
+
+        /**
+         * @hide
+         */
+        public static final String TOUCH_ZONE_THREE = "touch_zone_three";
+
+        /**
+         * @hide
+         */
+        public static final String TOUCH_ZONE_FOUR = "touch_zone_four";
+
+        /**
+         * @hide
+         */
+        public static final String GESTURE_SWIPE_CAPTURE = "gesture_swipe_capture";
+
+        /**
+         * @hide
+         */
+        public static final String GESTURE_SWIPE_DISTANCE = "gesture_swipe_distance";
+
+        /**
+         * @hide
+         */
+        public static final String SHOW_GESTURES = "show_gestures";
+
+        /**
+         * @hide
+         */
+        public static final String GESTURE_BLACKLIST = "gesture_blacklist";
+
+        /**
+         * @hide
+         */
+        public static final String LARGE_RECENTS = "large_recents";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -4481,6 +4598,17 @@ public final class Settings {
         @Deprecated
         public static final String WIFI_WATCHDOG_PING_TIMEOUT_MS =
             Secure.WIFI_WATCHDOG_PING_TIMEOUT_MS;
+
+	/**
+         * @hide
+         */
+        public static final String STATUS_BAR_BRIGHTNESS_SLIDER = "statusbar_brightness_slider";
+
+        /**
+         * @hide
+         */
+        public static final String STATUSBAR_TOGGLES_BRIGHTNESS_LOC = "statusbar_toggles_brightness_loc";
+
     }
 
     /**
@@ -5161,6 +5289,17 @@ public final class Settings {
          * modes that might be added in the future.
          */
         public static final String LOCATION_MODE = "location_mode";
+
+        /**
+         * The last degree of location access enabled by the user.
+         * <p/>
+         * Must be one of {@link
+         * #LOCATION_MODE_HIGH_ACCURACY}, {@link #LOCATION_MODE_SENSORS_ONLY}, {@link
+         * #LOCATION_MODE_BATTERY_SAVING}.
+         *
+         * @hide
+         */
+        public static final String LOCATION_LAST_MODE = "location_last_mode";
 
         /**
          * Location access disabled.

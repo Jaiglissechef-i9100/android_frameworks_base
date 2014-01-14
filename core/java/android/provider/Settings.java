@@ -4159,6 +4159,13 @@ public final class Settings {
          */
         public static final String DIALER_DIRECT_CALL = "dialer_direct_call";
 
+
+        /**
+         * show traffic in statusbar. The value is
+         * int (0: Hide  or 1: Only Rx 2: Rx&Tx).
+         */
+        public static final String STATUS_BAR_TRAFFIC_STYLE = "status_bar_traffic_style";
+
         /**		
 		 * Allows blurring the lockscreen background
          * @hide

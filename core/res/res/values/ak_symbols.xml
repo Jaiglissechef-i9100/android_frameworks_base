@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+  <!-- Network Speed Indicator -->
+  <java-symbol type="integer" name="config_networkSpeedIndicatorRefreshTimeout" />
+  <java-symbol type="integer" name="config_networkSpeedIndicatorSingleLineFontSize" />
+  <java-symbol type="integer" name="config_networkSpeedIndicatorDualLineFontSize" />
+
+</resources>

@@ -38,7 +38,7 @@
                 android:paddingRight="8dp"
                 android:enabled="false"
                 >
-                <com.android.systemui.statusbar.policy.Clock
+                <com.android.systemui.statusbar.policy.ClockStock
                     android:id="@+id/clock"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -47,14 +47,30 @@
                     android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Clock"
                     android:layout_centerVertical="true"
                     />
-
-                <com.android.systemui.statusbar.policy.DateView android:id="@+id/date"
+                
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/clock"
+            >
+                <com.android.systemui.statusbar.policy.LunarDateView
+                   android:id="@+id/lunardate"
+                   android:layout_width="wrap_content"
+                   android:layout_height="wrap_content"
+                   android:singleLine="true"
+                   android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Date"
+                   />
+		   
+                <com.android.systemui.statusbar.policy.DateView
+		    android:id="@+id/date"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:singleLine="true"
                     android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Date"
-                    android:layout_toRightOf="@id/clock"
-                    android:layout_centerVertical="true"
-                    />
+                    android:layout_below="@id/lunardate"
+                 />
+                    </RelativeLayout>
             </RelativeLayout>
 
             <RelativeLayout

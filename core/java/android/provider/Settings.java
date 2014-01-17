@@ -3180,6 +3180,12 @@ public final class Settings {
          */
         public static final String STATUS_BAR_AM_PM = "status_bar_am_pm";
 
+        /**
+         * Whether fcharge is enabled or not if kernel supports it
+         * @hide
+         */
+        public static final String FCHARGE_ENABLED = "fcharge_enabled";
+
 	/**
          * QuickSettings dynamic tiles configuration
          * @hide

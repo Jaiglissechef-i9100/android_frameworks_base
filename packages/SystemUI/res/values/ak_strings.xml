@@ -12,4 +12,6 @@
     <string name="pie_hour_format_24">HH:mm</string>
     <string name="pie_am_pm">a</string>
 
+    <string name="quick_settings_fcharge">Fast charge</string>
+
 </resources>

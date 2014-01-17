@@ -8,12 +8,16 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
+import android.net.Uri;
+import android.provider.Settings;
 import android.util.Log;
 import android.os.PowerManager;
 
@@ -24,10 +28,16 @@ public class FChargeButton extends PowerButton {
     public static final String FAST_CHARGE_FILE = "force_fast_charge";
     protected boolean on = false;
 
-    public FChargeButton() { mType = BUTTON_FCHARGE; on = isFastChargeOn();}
+    private static final List<Uri> OBSERVED_URIS = new ArrayList<Uri>();
+    static {
+        OBSERVED_URIS.add(Settings.System.getUriFor(Settings.System.FCHARGE_ENABLED));
+    }
+
+    public FChargeButton() { mType = BUTTON_FCHARGE; }
 
     @Override
     protected void updateState(Context context) {
+        on = isFastChargeOn();
         if (on) {
             mIcon = R.drawable.toggle_fcharge;
             mState = STATE_ENABLED;
@@ -49,7 +59,8 @@ public class FChargeButton extends PowerButton {
         } catch (IOException e) {
             Log.e("FChargeToggle", "Couldn't write fast_charge file");
         }
-
+        Settings.System.putInt(context.getContentResolver(),
+            Settings.System.FCHARGE_ENABLED, on ? 1 : 0);
     }
 
     @Override
@@ -72,8 +83,13 @@ public class FChargeButton extends PowerButton {
             return (line.equals("1"));
         } catch (IOException e) {
             Log.e("FChargeToggle", "Couldn't read fast_charge file");
-            return false;
         }
+        return false;
+    }
+
+    @Override
+    protected List<Uri> getObservedUris() {
+        return OBSERVED_URIS;
     }
 
 }

@@ -41,6 +41,7 @@ import static com.android.internal.util.beanstalk.QSConstants.TILE_NFC;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_QUICKRECORD;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_QUIETHOURS;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_RINGER;
+import static com.android.internal.util.beanstalk.QSConstants.TILE_SCREENSHOT;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_SCREENTIMEOUT;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_SETTINGS;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_SLEEP;
@@ -92,6 +93,7 @@ import com.android.systemui.quicksettings.QuickSettingsTile;
 import com.android.systemui.quicksettings.QuickRecordTile;
 import com.android.systemui.quicksettings.QuietHoursTile;
 import com.android.systemui.quicksettings.RingerModeTile;
+import com.android.systemui.quicksettings.ScreenshotTile;
 import com.android.systemui.quicksettings.ScreenTimeoutTile;
 import com.android.systemui.quicksettings.SleepScreenTile;
 import com.android.systemui.quicksettings.SyncTile;
@@ -212,6 +214,8 @@ public class QuickSettingsController {
                 qs = new RingerModeTile(mContext, this);
             } else if (tile.equals(TILE_FCHARGE)) {
                 qs = new FChargeTile(mContext, this, mHandler);
+            } else if (tile.equals(TILE_SCREENSHOT)) {
+                qs = new ScreenshotTile(mContext, this, mHandler);
             } else if (tile.equals(TILE_SYNC)) {
                 qs = new SyncTile(mContext, this);
             } else if (tile.equals(TILE_WIFIAP) && mobileDataSupported) {

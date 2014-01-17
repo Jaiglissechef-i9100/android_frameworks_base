@@ -3240,6 +3240,12 @@ public final class Settings {
         public static final String MUSIC_TILE_MODE = "music_tile_mode";
 
         /**
+         * Screenshot toggle delay
+         * @hide
+         */
+        public static final String SCREENSHOT_TOGGLE_DELAY = "screenshot_toggle_delay";
+
+        /**
          * Custom toggle click/long-click/icons for infinite toggles: actions 1-5
          * @hide
          */

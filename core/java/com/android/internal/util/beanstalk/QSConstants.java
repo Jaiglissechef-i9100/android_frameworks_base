@@ -48,6 +48,7 @@ public class QSConstants {
         public static final String TILE_REBOOT = "toggleReboot";
         public static final String TILE_CUSTOM = "toggleCustom";
         public static final String TILE_SCREENSHOT = "toggleScreenshot";
+        public static final String TILE_CAMERA = "toggleCamera";
 
         // dynamic tiles
         public static final String TILE_ALARM = "toggleAlarm";

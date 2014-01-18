@@ -25,6 +25,7 @@ import static com.android.internal.util.beanstalk.QSConstants.TILE_BATTERY;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_BLUETOOTH;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_BRIGHTNESS;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_BUGREPORT;
+import static com.android.internal.util.beanstalk.QSConstants.TILE_CAMERA;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_CUSTOM;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_CUSTOM_KEY;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_DELIMITER;
@@ -78,6 +79,7 @@ import com.android.systemui.quicksettings.BatteryTile;
 import com.android.systemui.quicksettings.BluetoothTile;
 import com.android.systemui.quicksettings.BrightnessTile;
 import com.android.systemui.quicksettings.BugReportTile;
+import com.android.systemui.quicksettings.CameraTile;
 import com.android.systemui.quicksettings.CustomTile;
 import com.android.systemui.quicksettings.ExpandedDesktopTile;
 import com.android.systemui.quicksettings.FChargeTile;
@@ -165,6 +167,7 @@ public class QuickSettingsController {
         boolean mobileDataSupported = DeviceUtils.deviceSupportsMobileData(mContext);
         boolean lteSupported = DeviceUtils.deviceSupportsLte(mContext);
         boolean torchSupported = DeviceUtils.deviceSupportsTorch(mContext);
+        boolean cameraSupported = DeviceUtils.deviceSupportsCamera();
 
         if (!bluetoothSupported) {
             TILES_DEFAULT.remove(TILE_BLUETOOTH);
@@ -216,6 +219,8 @@ public class QuickSettingsController {
                 qs = new FChargeTile(mContext, this, mHandler);
             } else if (tile.equals(TILE_SCREENSHOT)) {
                 qs = new ScreenshotTile(mContext, this, mHandler);
+            } else if (tile.equals(TILE_CAMERA) && cameraSupported) {
+                qs = new CameraTile(mContext, this, mHandler);
             } else if (tile.equals(TILE_SYNC)) {
                 qs = new SyncTile(mContext, this);
             } else if (tile.equals(TILE_WIFIAP) && mobileDataSupported) {

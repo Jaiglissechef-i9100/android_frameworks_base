@@ -14,6 +14,7 @@ import android.util.DisplayMetrics;
 import android.view.DisplayInfo;
 import android.view.WindowManager;
 import android.util.Log;
+import android.hardware.Camera;
 
 import com.android.internal.telephony.PhoneConstants;
 
@@ -47,6 +48,10 @@ public class DeviceUtils {
 
     public static boolean deviceSupportsNfc(Context context) {
         return NfcAdapter.getDefaultAdapter(context) != null;
+    }
+
+    public static boolean deviceSupportsCamera() {
+        return Camera.getNumberOfCameras() > 0;
     }
 
     public static boolean deviceSupportsLte(Context context) {

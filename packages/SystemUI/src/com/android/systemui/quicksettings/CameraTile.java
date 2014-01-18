@@ -131,7 +131,7 @@ public class CameraTile extends QuickSettingsTile {
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    if (panel.isFullyExpanded() && parent.getScaleX() == 1) {
+                    if (panel != null && panel.isFullyExpanded() && parent.getScaleX() == 1) {
                         mHandler.postDelayed(this, 100);
                     } else {
                         mHandler.post(mReleaseCameraRunnable);

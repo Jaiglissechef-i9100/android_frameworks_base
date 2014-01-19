@@ -428,7 +428,7 @@ final class ActivityRecord {
             // In order to hook its attributes we set up our check for floating mutil windows here.
             topIntent = true;
 
-            ActivityStack stack = supervisor.getFocusedStack();
+            ActivityStack stack = task == null ? null : task.stack;
 
             floatingWindow = (intent.getFlags() & Intent.FLAG_FLOATING_WINDOW) == Intent.FLAG_FLOATING_WINDOW;
 

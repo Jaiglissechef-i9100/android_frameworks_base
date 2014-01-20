@@ -17,7 +17,6 @@
 package android.text.format;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.provider.Settings;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -455,12 +454,7 @@ public class DateFormat {
             switch (c) {
                 case 'A':
                 case 'a':
-                    Resources r = Resources.getSystem();
-                    if(r.getConfiguration().locale.getCountry().equals("CN")||r.getConfiguration().locale.getCountry().equals("TW")) {
-                 		replacement=DateUtils.getAMPMCNString(inDate.get(Calendar.HOUR), inDate.get(Calendar.AM_PM));
-                    } else {
-                 		replacement = localeData.amPm[inDate.get(Calendar.AM_PM) - Calendar.AM];
-                    }
+                    replacement = localeData.amPm[inDate.get(Calendar.AM_PM) - Calendar.AM];
                     break;
                 case 'd':
                     replacement = zeroPad(inDate.get(Calendar.DATE), count);

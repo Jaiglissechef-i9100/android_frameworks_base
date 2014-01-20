@@ -290,7 +290,7 @@ public class NotificationHostView extends FrameLayout {
         mNotificationManager = INotificationManager.Stub.asInterface(
                 ServiceManager.getService(Context.NOTIFICATION_SERVICE));
         if (NotificationViewManager.config != null) {
-            mDynamicWidth = NotificationViewManager.config.dynamicWidth;
+                mDynamicWidth = NotificationViewManager.config.dynamicWidth;
         }
     }
 

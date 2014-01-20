@@ -23,5 +23,11 @@ import java.util.Locale;
 public class MoKeeUtils {
     public static boolean isChineseLanguage() {
        return Resources.getSystem().getConfiguration().locale.getLanguage().startsWith(Locale.CHINESE.getLanguage());
+       Resources res = Resources.getSystem();
+       if (res.getConfiguration().locale.getCountry().equals("CN") || res.getConfiguration().locale.getCountry().equals("TW")) {
+            return true;
+       } else {
+            return false;
+       }
     }
 }

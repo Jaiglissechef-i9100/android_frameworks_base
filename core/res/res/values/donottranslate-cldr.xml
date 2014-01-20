@@ -19,5 +19,4 @@
 
     <!-- Lunar string format -->
     <string name="abbrev_wday_month_day_year">EEE, MMM d, yyyy</string>
-    <string name="abbrev_wday_month_day_no_year">EEE, MMMM d</string>
 </resources>

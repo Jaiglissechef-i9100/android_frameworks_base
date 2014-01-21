@@ -54,10 +54,10 @@ public class BatteryTextMeterView extends TextView implements BatteryStateChange
         super.onAttachedToWindow();
 
         getContext().getContentResolver().registerContentObserver(
-                Settings.AOKP.getUriFor(Settings.AOKP.BATTERY_PERCENTAGE_INDICATOR),
+                Settings.System.getUriFor(Settings.System.BATTERY_PERCENTAGE_INDICATOR),
                 false, mObserver);
         getContext().getContentResolver().registerContentObserver(
-                Settings.AOKP.getUriFor(Settings.AOKP.BATTERY_PERCENTAGE_INDICATOR_PLUGGED),
+                Settings.System.getUriFor(Settings.System.BATTERY_PERCENTAGE_INDICATOR_PLUGGED),
                 false, mObserver);
         updateSettings();
     }
@@ -70,10 +70,10 @@ public class BatteryTextMeterView extends TextView implements BatteryStateChange
     }
 
     private void updateSettings() {
-        mEnabled = Settings.AOKP.getBoolean(mContext.getContentResolver(),
-                        Settings.AOKP.BATTERY_PERCENTAGE_INDICATOR, false);
-        mPluggedEnabled = Settings.AOKP.getBoolean(mContext.getContentResolver(),
-                        Settings.AOKP.BATTERY_PERCENTAGE_INDICATOR_PLUGGED, false);
+        mEnabled = Settings.System.getBoolean(mContext.getContentResolver(),
+                        Settings.System.BATTERY_PERCENTAGE_INDICATOR, false);
+        mPluggedEnabled = Settings.System.getBoolean(mContext.getContentResolver(),
+                        Settings.System.BATTERY_PERCENTAGE_INDICATOR_PLUGGED, false);
         refreshView();
     }
 

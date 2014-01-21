@@ -3200,6 +3200,13 @@ public final class Settings {
          */
         public static final String FCHARGE_ENABLED = "fcharge_enabled";
 
+        /**
+         * Show battery percentage indicator front of battery icon
+         *
+         * @hide
+         */
+        public static final String BATTERY_PERCENTAGE_INDICATOR = "battery_percentage_indicator";
+
 	/**
          * QuickSettings dynamic tiles configuration
          * @hide

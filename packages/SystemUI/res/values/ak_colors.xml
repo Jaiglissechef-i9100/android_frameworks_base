@@ -43,4 +43,6 @@
 
     <!-- THEMEABLE PIE PIE PIE PIE PIE? -->
 
+    <color name="status_bar_battery_text_color">#FFFFFFFF</color>
+
 </resources>

@@ -3207,6 +3207,13 @@ public final class Settings {
          */
         public static final String BATTERY_PERCENTAGE_INDICATOR = "battery_percentage_indicator";
 
+        /**
+         * Change battery percentage indicator color during charging
+         *
+         * @hide
+         */
+        public static final String BATTERY_PERCENTAGE_INDICATOR_PLUGGED = "battery_percentage_indicator_plugged";
+
 	/**
          * QuickSettings dynamic tiles configuration
          * @hide

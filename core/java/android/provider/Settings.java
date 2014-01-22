@@ -3926,6 +3926,12 @@ public final class Settings {
         public static final String MEDIA_SCANNER_ON_BOOT = "media_scanner_on_boot";
 
         /**
+         * show carrier in statusbar. The value is
+         * boolean (1 or 0).
+         */
+        public static final String STATUS_BAR_CARRIER = "status_bar_carrier";
+
+        /**
          * Holds the text for the Carrier label. An empty string
          * will bring the default text back.
          * @hide

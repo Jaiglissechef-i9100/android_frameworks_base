@@ -75,7 +75,7 @@
     <!-- Keyguard -->
     <uses-permission android:name="android.permission.CONTROL_KEYGUARD" />
  
-    <!--Halo-->
+    <!-- Halo -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <!-- Wifi Display -->
@@ -88,6 +88,9 @@
 
     <!-- Reboot -->
     <uses-permission android:name="android.permission.REBOOT" />
+
+    <!-- Kill app permission -->
+    <uses-permission android:name="android.permission.FORCE_STOP_PACKAGES" />
 
     <!-- Active display -->
     <uses-permission android:name="android.permission.SYSTEM_NOTIFICATION_LISTENER" />

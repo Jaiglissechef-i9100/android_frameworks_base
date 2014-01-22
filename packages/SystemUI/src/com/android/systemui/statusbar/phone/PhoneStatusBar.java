@@ -280,9 +280,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     private int mHideLabels;
 
     private boolean mRecreating = false;
-	
-	// Status bar carrier
-    private boolean mShowStatusBarCarrier;
 
     // position
     int[] mPositionTmp = new int[2];
@@ -505,8 +502,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.STATUSBAR_WEATHER_STYLE), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.USE_WEATHER), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_CARRIER), false, this);
 
             update();
         }
@@ -631,21 +626,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mCarrierAndWifiView.setVisibility(
                         (mHideLabels != 3) ? View.VISIBLE : View.INVISIBLE);
             }
-
-           mShowStatusBarCarrier = Settings.System.getIntForUser(resolver,
-                Settings.System.STATUS_BAR_CARRIER, 0, mCurrentUserId) == 1;
-           showStatusBarCarrierLabel(mShowStatusBarCarrier);
-
             updateBatteryIcons();
-        }
-    }
-
-    public void showStatusBarCarrierLabel(boolean show) {
-        if (mStatusBarView == null) return;
-        ContentResolver resolver = mContext.getContentResolver();
-        View statusBarCarrierLabel = mStatusBarView.findViewById(R.id.status_bar_carrier_label);
-        if (statusBarCarrierLabel != null) {
-            statusBarCarrierLabel.setVisibility(show ? (mShowStatusBarCarrier ? View.VISIBLE : View.GONE) : View.GONE);
         }
     }
 
@@ -1965,8 +1946,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if ((diff & StatusBarManager.DISABLE_CLOCK) != 0) {
             boolean show = (state & StatusBarManager.DISABLE_CLOCK) == 0;
             showClock(show);
-            //add CarrierLabel
-            showStatusBarCarrierLabel(show);
         }
         if ((diff & StatusBarManager.DISABLE_EXPAND) != 0) {
             if ((state & StatusBarManager.DISABLE_EXPAND) != 0) {

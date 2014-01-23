@@ -145,4 +145,7 @@
 
     <!--  Weather Panel -->
     <string name="weatherpanel_slash">/</string>
+
+    <string name="status_bar_notification_hide_icon_packages">Hide status bar app\'s notification icon(s)</string>
+
 </resources>

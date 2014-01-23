@@ -496,9 +496,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.QUICK_TILES_BG_ALPHA),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.LCD_DENSITY),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUSBAR_WEATHER_STYLE), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.USE_WEATHER), false, this);
@@ -591,10 +588,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 if (mNotificationShortcutsLayout != null) {
                     mNotificationShortcutsLayout.updateShortcuts();
                 }
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.LCD_DENSITY))) {
-                mDisplayMetrics.updateDensity();
-                recreateStatusBar(true);
             }
 
             update();

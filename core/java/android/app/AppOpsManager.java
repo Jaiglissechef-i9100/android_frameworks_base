@@ -1303,6 +1303,7 @@ public class AppOpsManager {
         }
     }
 
+<<<<<<< HEAD
     /**
      * Retrieve the privacy guard state associated icons for notification and settings
      */
@@ -1324,6 +1325,7 @@ public class AppOpsManager {
         return com.android.internal.R.drawable.stat_notify_privacy_guard_off;
     }
 
+    /** @hide */
     public void resetCounters() {
         try {
             mService.resetCounters();

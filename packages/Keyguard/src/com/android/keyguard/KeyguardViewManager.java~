@@ -152,17 +152,29 @@ public class KeyguardViewManager {
 
         @Override
         public void onChange(boolean selfChange) {
+<<<<<<< HEAD
+            setKeyguardParams();
+            updateSettings();
+            mViewManager.updateViewLayout(mKeyguardHost, mWindowLayoutParams);
+=======
             synchronized (this) {
                 updateSettings();
                 setKeyguardParams();
                 mViewManager.updateViewLayout(mKeyguardHost, mWindowLayoutParams);
             }
+>>>>>>> fcbfde7... keyguard improvements:
         }
     }
 
     private void updateSettings() {
     	mBlurEnabled = Settings.System.getInt(mContext.getContentResolver(),
     			Settings.System.LOCKSCREEN_BLUR_BEHIND, 0) == 1;
+<<<<<<< HEAD
+    	mBlurRadius = Settings.System.getInt(mContext.getContentResolver(),
+    			Settings.System.LOCKSCREEN_BLUR_RADIUS, 12);
+    	if(!mBlurEnabled) {
+    		mCustomBackground = null;
+    	}
 
         mLockscreenNotifications = Settings.System.getInt(mContext.getContentResolver(),
                 Settings.System.LOCKSCREEN_NOTIFICATIONS, mLockscreenNotifications ? 1 : 0) == 1;
@@ -173,6 +185,7 @@ public class KeyguardViewManager {
             mNotificationViewManager.unregisterListeners();
             mNotificationViewManager = null;
     	}
+=======
 
 	if (mBlurEnabled) {
             isSeeThroughEnabled = true;
@@ -183,6 +196,7 @@ public class KeyguardViewManager {
             isSeeThroughEnabled = Settings.System.getInt(mContext.getContentResolver(),
                     Settings.System.LOCKSCREEN_SEE_THROUGH, 0) == 1;
         }
+>>>>>>> fcbfde7... keyguard improvements:
     }
 
     /**

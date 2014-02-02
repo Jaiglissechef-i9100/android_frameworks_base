@@ -34,8 +34,11 @@ import android.content.res.CustomTheme;
 import android.content.res.IThemeChangeListener;
 import android.content.res.IThemeService;
 import android.database.Cursor;
+<<<<<<< HEAD
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+=======
+>>>>>>> 34d6168... New Theme Engine [1/6]
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Binder;
@@ -47,14 +50,20 @@ import android.os.Message;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.os.SystemProperties;
+<<<<<<< HEAD
 import android.provider.Settings;
+=======
+>>>>>>> 34d6168... New Theme Engine [1/6]
 import android.provider.ThemesContract;
 import android.util.Log;
 import android.webkit.URLUtil;
 
 import java.io.BufferedInputStream;
 import java.io.File;
+<<<<<<< HEAD
 import java.io.FileOutputStream;
+=======
+>>>>>>> 34d6168... New Theme Engine [1/6]
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -66,8 +75,11 @@ import static android.content.pm.ThemeUtils.THEME_BOOTANIMATION_PATH;
 
 import java.util.List;
 
+<<<<<<< HEAD
 import com.android.internal.util.cm.LockscreenBackgroundUtil;
 
+=======
+>>>>>>> 34d6168... New Theme Engine [1/6]
 /**
  * {@hide}
  */
@@ -400,6 +412,7 @@ public class ThemeService extends IThemeService.Stub {
         return true;
     }
 
+<<<<<<< HEAD
     private boolean updateLockscreen() {
         boolean success = false;
         if ("default".equals(mPkgName)) {
@@ -445,6 +458,11 @@ public class ThemeService extends IThemeService.Stub {
         Settings.System.putInt(mContext.getContentResolver(), Settings.System.LOCKSCREEN_BACKGROUND_STYLE,
                 LockscreenBackgroundUtil.LOCKSCREEN_STYLE_IMAGE);
         return true;
+=======
+    private void updateLockscreen() {
+        // TODO: implement actual behavior
+        sleepQuiet(100);
+>>>>>>> 34d6168... New Theme Engine [1/6]
     }
 
     private boolean updateWallpaper() {
@@ -553,6 +571,17 @@ public class ThemeService extends IThemeService.Stub {
         }
     }
 
+<<<<<<< HEAD
+=======
+    private void sleepQuiet(long ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+>>>>>>> 34d6168... New Theme Engine [1/6]
     private void postProgress(String pkgName) {
         int N = mClients.beginBroadcast();
         for(int i=0; i < N; i++) {

@@ -463,6 +463,7 @@ public class ThemeUtils {
         context.registerReceiver(receiver, filter);
     }
 
+<<<<<<< HEAD
     public static String getLockscreenWallpaperPath(AssetManager assetManager) throws IOException {
         final String WALLPAPER_JPG = "wallpaper.jpg";
         final String WALLPAPER_PNG = "wallpaper.png";
@@ -479,6 +480,8 @@ public class ThemeUtils {
         return null;
     }
 
+=======
+>>>>>>> 34d6168... New Theme Engine [1/6]
     private static class ThemedUiContext extends ContextWrapper {
         private String mPackageName;
 

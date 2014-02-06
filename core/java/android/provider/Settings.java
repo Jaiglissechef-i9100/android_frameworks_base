@@ -4977,11 +4977,6 @@ public final class Settings {
         /**
          * @hide
          */
-        public static final String DUAL_PANE_PREFS = "dual_pane_prefs";
-
-        /**
-         * @hide
-         */
         public static final String LARGE_RECENT_THUMBS = "large_recent_thumbs";
 
         /**

@@ -4963,6 +4963,12 @@ public final class Settings {
          */
         public static final String SHOW_PROFILES = "show_profiles";
 
+        /**
+         * Weather Tile Icon
+         * @hide
+         */
+        public static final String WEATHER_TILE_ICON = "weather_tile_icon";
+
 	/**
          * whether which Ram Usage Bar mode is used on recent switcher
          * 0 = none, 1 = only app use, 2 = app and cache use, 3 = app, cache and system use

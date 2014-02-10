@@ -23,6 +23,8 @@ import android.os.Bundle;
 import com.android.internal.util.beanstalk.ButtonsConstants;
 import com.android.internal.util.beanstalk.SlimActions;
 
+import com.android.internal.util.cm.TorchConstants;
+
 public class Torch extends Activity  {
 
     @Override

@@ -123,7 +123,7 @@ public class Weather extends QuickSettingsTile {
 		int check = filecheck();
 		if ( check == 1  ) {
 		int check2 = getline();
-		if (check2 == 5 ) {
+		if (check2 == 10 ) {
 
 		//parse weather
 		String condition = Readfile(1);
@@ -131,6 +131,11 @@ public class Weather extends QuickSettingsTile {
 		String lowtemp = Readfile(3);
 		String hightemp = Readfile(4);
 		String currenttemp = Readfile(5);
+		String tempunit = Readfile(6);
+		String humidity = Readfile(7);
+		String windstrength = Readfile(8);
+		String winddirection = Readfile(9);
+		String SpeedUnit = Readfile(10);
 
 	        //transform string
 	        StringTokenizer st;
@@ -162,17 +167,17 @@ public class Weather extends QuickSettingsTile {
 		int ConditionStringresID = mContext.getResources().getIdentifier(ConditionStringresName, "string", packName);
 
 		//SETTEXT
-	    tv.setText(state);
-	    tv1.setText(current+"℃");
-	    tv2.setText(low+"℃ | "+high+"℃");
-	    tv3.setText(ConditionStringresID);
-	    } else {
+		tv.setText(state);
+		tv1.setText(current+"℃");
+		tv2.setText(low+"℃ | "+high+"℃");
+		tv3.setText(ConditionStringresID);
+		} else {
 	    	setNofile();
 	    	}
 		} else {
-			setNofile();
-			}
+		setNofile();
 		}
+	}
 
 	public void setNofile() {
 		TextView tv = (TextView) mTile.findViewById(R.id.text);

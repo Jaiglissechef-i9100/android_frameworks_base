@@ -5639,12 +5639,15 @@ public final class Settings {
         public static final String HOVER_EXCLUDE_TOPMOST = "hover_exclude_topmost";
 
         /**
+<<<<<<< HEAD
          * Disable ads (HFM)
          * @hide
          */
         public static final String HFM_DISABLE_ADS = "hfm_disable_ads";
 
         /**
+=======
+>>>>>>> ec57b29... Add evening time to header
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *

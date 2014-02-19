@@ -112,8 +112,16 @@
     <java-symbol type="id" name="max_value" />
     <java-symbol type="id" name="textsize_seekbar" />
 
-  <!-- EdgeGesture service -->
-  <java-symbol type="dimen" name="edge_gesture_trigger_distance" />
-  <java-symbol type="dimen" name="edge_gesture_perpendicular_distance" />
-  <java-symbol type="dimen" name="edge_gesture_trigger_thickness" />
+    <!-- EdgeGesture service -->
+    <java-symbol type="dimen" name="edge_gesture_trigger_distance" />
+    <java-symbol type="dimen" name="edge_gesture_perpendicular_distance" />
+    <java-symbol type="dimen" name="edge_gesture_trigger_thickness" />
+
+    <!-- Slim recent app screen-->
+    <java-symbol type="integer" name="config_recentDefaultDur" />
+    <java-symbol type="integer" name="config_recentExitDur" />
+    <java-symbol type="style" name="Animation.RecentScreen" />
+    <java-symbol type="anim" name="recent_screen_enter" />
+    <java-symbol type="anim" name="recent_screen_fade_out" />
+
 </resources>

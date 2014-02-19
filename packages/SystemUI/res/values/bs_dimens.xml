@@ -41,4 +41,10 @@
     <!-- Height of carrier label + close handle -->
     <dimen name="weather_text_margin">56dp</dimen>
 
+    <!-- Slim recent -->
+    <dimen name="recent_width">230dp</dimen>
+    <dimen name="recent_app_icon_size">48dp</dimen>
+    <dimen name="recent_thumbnail_width">198dp</dimen>
+    <dimen name="recent_thumbnail_height">140dp</dimen>
+
 </resources>

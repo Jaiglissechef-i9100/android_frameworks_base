@@ -1288,6 +1288,7 @@ public class AppOpsService extends IAppOpsService.Stub {
     }
 
     @Override
+<<<<<<< HEAD
     public void setPrivacyGuardSettingForPackage(int uid, String packageName,
             boolean state, boolean forceAll) {
         List<Integer> switchOps;
@@ -1315,6 +1316,14 @@ public class AppOpsService extends IAppOpsService.Stub {
         for (int op : switchOps) {
             setMode(op, uid, packageName, state
                     ? AppOpsManager.MODE_IGNORED : AppOpsManager.MODE_ALLOWED);
+        }
+    }
+
+    public void setPrivacyGuardSettingForPackage(int uid, String packageName, boolean state) {
+        for (int op : PRIVACY_GUARD_OP_STATES) {
+            int switchOp = AppOpsManager.opToSwitch(op);
+            setMode(switchOp, uid, packageName, state
+                    ? AppOpsManager.MODE_ASK : AppOpsManager.MODE_ALLOWED);
         }
     }
 

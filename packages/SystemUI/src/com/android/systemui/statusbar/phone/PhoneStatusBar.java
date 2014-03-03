@@ -364,7 +364,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     int[] mAbsPos = new int[2];
     Runnable mPostCollapseCleanup = null;
-    
+
     // status bar brightness control
     private boolean mBrightnessControl;
     private float mScreenWidth;
@@ -991,7 +991,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (mRecreating) {
         } else {
             addActiveDisplayView();
-            /* ChaosLab: GestureAnywhere - BEGIN */
             addGestureAnywhereView();
             /* ChaosLab: GestureAnywhere - END */
         }

@@ -3667,6 +3667,13 @@ public final class Settings {
         public static final String SHOW_GB_RAMBAR = "show_gb_rambar";
 
         /**
+         * Custom Recent Control
+         *
+         * @hide
+         */
+        public static final String CUSTOM_RECENT = "custom_recent";
+
+        /**
          * Show clear all recents button
          *  @hide
          */

@@ -968,6 +968,8 @@ public class WallpaperManager {
      * View.getWindowToken()}.
      * @param xOverscrollOffset The overscroll offset along the X dimension, from 0 to 1.
      * @param yOverscrollOffset The overscroll offset along the Y dimension, from 0 to 1.
+     *
+     * @hide
      */
     public void setWallpaperOverscrollOffsets(IBinder windowToken, float xOverscrollOffset,
             float yOverscrollOffset) {
@@ -983,6 +985,7 @@ public class WallpaperManager {
         }
     }
 
+    /** @hide */
     public void setWallpaperOverscroll(int xOverscroll, int yOverscroll) {
         mWallpaperXOverscroll = xOverscroll;
         mWallpaperYOverscroll = yOverscroll;

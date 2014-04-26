@@ -4454,6 +4454,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mStatusBarContainer.removeAllViews();
         mStatusBarContainer.clearDisappearingChildren();
 
+        removeAllViews(mStatusBarWindow);
+
         // extract icons from the soon-to-be recreated viewgroup.
         int nIcons = mStatusIcons.getChildCount();
         ArrayList<StatusBarIcon> icons = new ArrayList<StatusBarIcon>(nIcons);
@@ -4505,6 +4507,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mRecreating = false;
 
         updateHalo();
+    }
+
+    private void removeAllViews(ViewGroup parent) {
+        int N = parent.getChildCount();
+        for (int i = 0; i < N; i++) {
+            View child = parent.getChildAt(i);
+            if (child instanceof ViewGroup) {
+                removeAllViews((ViewGroup) child);
+            }
+        }
+        parent.removeAllViews();
     }
 
     /**

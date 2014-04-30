@@ -994,8 +994,20 @@ public class NavigationBarView extends LinearLayout {
                  ? findViewById(R.id.rot90)
                  : findViewById(R.id.rot270);
 
+<<<<<<< HEAD
         mCurrentView = mRotatedViews[Surface.ROTATION_0];
         updateSettings();
+=======
+        final String keyguardPackage = mContext.getString(
+                com.android.internal.R.string.config_keyguardPackage);
+        final Bundle keyguard_metadata = NavigationBarView
+                .getApplicationMetadata(mContext, keyguardPackage);
+        if (null != keyguard_metadata &&
+                keyguard_metadata.getBoolean("com.cyanogenmod.keyguard", false)) {
+            mObserver.observe();
+        }
+    }
+>>>>>>> 71aed47... frameworks: allow Keyguard package to be defined in overlay
 
         watchForAccessibilityChanges();
     }

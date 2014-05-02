@@ -4250,6 +4250,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         updateSettings();
 
         mRecreating = false;
+
+        updateHalo();
     }
 
     /**

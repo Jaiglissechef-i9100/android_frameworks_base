@@ -3531,6 +3531,12 @@ public final class Settings {
         public static final String SCREENSHOT_TOGGLE_DELAY = "screenshot_toggle_delay";
 
         /**
+         * Let Quick Settings Panel Tiles vibrate on click
+         * @hide
+         */
+        public static final String QUICK_SETTINGS_TILES_VIBRATE = "quick_settings_tiles_vibrate";
+
+        /**
          * Custom toggle click/long-click/icons for infinite toggles: actions 1-5
          * @hide
          */

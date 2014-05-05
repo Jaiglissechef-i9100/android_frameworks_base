@@ -1121,7 +1121,8 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
             new PopupMenu(mContext, anchorView == null ? selectedView : anchorView);
         mPopup = popup;
 
-	int mHaloEnabled = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.HALO_ENABLED, 0));
+	int mHaloEnabled = (Settings.System.getInt(mContext.getContentResolver(), 
+                                Settings.System.HALO_ENABLED, 0));
 
 	if(mHaloEnabled != 1){
         	popup.getMenuInflater().inflate(R.menu.recent_popup_menu_split, popup.getMenu());
@@ -1160,7 +1161,8 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
 
-		int mHaloEnabled = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.HALO_ENABLED, 0));
+		int mHaloEnabled = (Settings.System.getInt(mContext.getContentResolver(), 
+                                Settings.System.HALO_ENABLED, 0));
 
                 if (item.getItemId() == R.id.recent_remove_item) {
                     ((ViewGroup) mRecentsContainer).removeViewInLayout(selectedView);
@@ -1200,12 +1202,11 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
                     ViewHolder viewHolder = (ViewHolder) selectedView.getTag();
                     if (viewHolder != null) {
                         final TaskDescription ad = viewHolder.taskDescription;
-                        Intent intent = ad.intent;
-                        intent.addFlags(Intent.FLAG_FLOATING_WINDOW
-                                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        intent.setFlags(intent.getFlags() & ~Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY);
-                        getContext().startActivity(intent);
                         dismissAndGoBack();
+                        Intent intent = ad.intent;
+                        intent.setFlags(Intent.FLAG_FLOATING_WINDOW
+                                | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        getContext().startActivity(intent);
                     }
                 } else if (item.getItemId() == R.id.recent_add_split_view && mHaloEnabled != 1) {
                     // Either start a new activity in split view, or move the current task

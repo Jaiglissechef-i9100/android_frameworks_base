@@ -106,6 +106,8 @@ public class CreateShortcut extends LauncherActivity {
             showDialogSetting(DLG_SECRET);
         } else if (className.equals("Immersive")
                 || className.equals("QuietHours")
+                || className.equals("Torch")
+                || className.equals("ShakeEvents")
                 || className.equals("Rotation")) {
             showDialogSetting(DLG_TOGGLE);
         } else {
@@ -136,6 +138,8 @@ public class CreateShortcut extends LauncherActivity {
             return R.drawable.ic_qs_sleep;
         } else if (c.equals("VolumePanel")) {
             return R.drawable.ic_qs_volume;
+        } else if (c.equals("ShakeEvents")) {
+            return R.drawable.ic_qs_shake_events;
         } else if (c.equals("ChamberOfSecrets")) {
             return R.drawable.ic_qs_reboot_recovery;
         } else {

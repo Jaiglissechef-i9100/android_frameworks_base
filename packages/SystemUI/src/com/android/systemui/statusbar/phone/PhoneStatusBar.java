@@ -179,8 +179,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     public static final String ACTION_STATUSBAR_START
             = "com.android.internal.policy.statusbar.START";
 
-    public static final String MODLOCK_STATE
-             = "com.android.keyguard.modlock.STATE";
+    public static final String CUSTOM_LOCKSCREEN_STATE
+            = "com.android.keyguard.custom.STATE";
 
     private static final int MSG_OPEN_NOTIFICATION_PANEL = 1000;
     private static final int MSG_CLOSE_PANELS = 1001;
@@ -1570,7 +1570,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         filter.addAction(Intent.ACTION_USER_PRESENT);
         filter.addAction(ACTION_DEMO);
         filter.addAction(SCHEDULE_REMINDER_NOTIFY);
-        filter.addAction(MODLOCK_STATE);
+        filter.addAction(CUSTOM_LOCKSCREEN_STATE);
         context.registerReceiver(mBroadcastReceiver, filter);
 
         // receive broadcasts for app actions
@@ -4298,7 +4298,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     }
                 }
             }
-            else if (MODLOCK_STATE.equals(action)) {
+            else if (CUSTOM_LOCKSCREEN_STATE.equals(action)) {
                 boolean showing = intent.getBooleanExtra("showing", false);
                 if (null != mNavigationBarView) {
                     mNavigationBarView.getBarTransitions().applyTransparent(showing);

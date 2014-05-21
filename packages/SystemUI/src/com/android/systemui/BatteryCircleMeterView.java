@@ -61,6 +61,7 @@ public class BatteryCircleMeterView extends ImageView {
     private BatteryReceiver mBatteryReceiver = null;
 
     // state variables
+    private boolean mIsQuickSettings;
     private boolean mAttached;      // whether or not attached to a window
     private boolean mActivated;     // whether or not activated due to system settings
     private boolean mPercentage;    // whether or not to show percentage number
@@ -183,7 +184,7 @@ public class BatteryCircleMeterView extends ImageView {
         mHandler = new Handler();
         mBatteryReceiver = new BatteryReceiver(mContext);
 
-        updateSettings(false);
+        updateSettings(mIsQuickSettings);
     }
 
     @Override
@@ -291,6 +292,8 @@ public class BatteryCircleMeterView extends ImageView {
     public void updateSettings(final boolean isQuickSettingsTile) {
         Resources res = getResources();
         ContentResolver resolver = mContext.getContentResolver();
+
+        mIsQuickSettings = isQuickSettingsTile;
 
         mBatteryStyle = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_BAR_BATTERY, 0, UserHandle.USER_CURRENT);

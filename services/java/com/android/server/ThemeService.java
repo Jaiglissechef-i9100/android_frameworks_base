@@ -50,6 +50,7 @@ import android.os.Message;
 import android.os.RemoteCallbackList;
 import android.os.RemoteException;
 import android.os.SystemProperties;
+import android.os.UserHandle;
 import android.provider.Settings;
 import android.provider.ThemesContract;
 import android.text.TextUtils;
@@ -470,7 +471,8 @@ public class ThemeService extends IThemeService.Stub {
         }
 
         if (success) {
-            mContext.sendBroadcast(new Intent(Intent.ACTION_KEYGUARD_WALLPAPER_CHANGED));
+            mContext.sendBroadcastAsUser(new Intent(Intent.ACTION_KEYGUARD_WALLPAPER_CHANGED),
+                    UserHandle.ALL);
         }
         return success;
     }
@@ -664,7 +666,8 @@ public class ThemeService extends IThemeService.Stub {
 
         // if successful, broadcast that the theme changed
         if (isSuccess) {
-            mContext.sendBroadcast(new Intent(ThemeUtils.ACTION_THEME_CHANGED));
+            mContext.sendBroadcastAsUser(new Intent(ThemeUtils.ACTION_THEME_CHANGED),
+                    UserHandle.ALL);
         }
     }
 

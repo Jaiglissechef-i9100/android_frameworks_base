@@ -65,6 +65,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
@@ -85,12 +86,16 @@ public class ThemeService extends IThemeService.Stub {
     private static final String GOOGLE_SETUPWIZARD_PACKAGE = "com.google.android.setupwizard";
     private static final String CM_SETUPWIZARD_PACKAGE = "com.cyanogenmod.account";
 
+    private static final long MAX_ICON_CACHE_SIZE = 33554432L; // 32MB
+    private static final long PURGED_ICON_CACHE_SIZE = 25165824L; // 24 MB
+
     private HandlerThread mWorker;
     private ThemeWorkerHandler mHandler;
     private Context mContext;
     private String mPkgName;
     private int mProgress;
     private boolean mWallpaperChangedByUs = false;
+    private long mIconCacheSize = 0L;
 
     private final RemoteCallbackList<IThemeChangeListener> mClients =
             new RemoteCallbackList<IThemeChangeListener>();
@@ -144,6 +149,7 @@ public class ThemeService extends IThemeService.Stub {
         ThemeUtils.createAlarmDirIfNotExists();
         ThemeUtils.createNotificationDirIfNotExists();
         ThemeUtils.createRingtoneDirIfNotExists();
+        ThemeUtils.createIconCacheDirIfNotExists();
     }
 
     public void systemRunning() {
@@ -226,7 +232,6 @@ public class ThemeService extends IThemeService.Stub {
         postFinish(true, pkgName, components);
     }
 
-<<<<<<< HEAD
     private void doApplyDefaultTheme() {
         final ContentResolver resolver = mContext.getContentResolver();
         final String defaultThemePkg = Settings.Secure.getString(resolver,
@@ -263,10 +268,8 @@ public class ThemeService extends IThemeService.Stub {
         }
     }
 
-    private void updateProvider(List<String> components) {
-=======
     private void updateProvider(List<String> components, String pkgName) {
->>>>>>> 64348cc... CM11 Themes: Clear wallpaper mixnmatch entry on external change
+
         ContentValues values = new ContentValues();
         values.put(ThemesContract.MixnMatchColumns.COL_VALUE, pkgName);
 
@@ -509,11 +512,10 @@ public class ThemeService extends IThemeService.Stub {
         Settings.System.putInt(mContext.getContentResolver(), Settings.System.LOCKSCREEN_BACKGROUND_STYLE,
                 LockscreenBackgroundUtil.LOCKSCREEN_STYLE_IMAGE);
         return true;
-=======
+
     private void updateLockscreen() {
         // TODO: implement actual behavior
         sleepQuiet(100);
->>>>>>> 34d6168... New Theme Engine [1/6]
     }
 
     private boolean updateWallpaper() {
@@ -752,6 +754,50 @@ public class ThemeService extends IThemeService.Stub {
         }
     }
 
+    @Override
+    public boolean cacheComposedIcon(Bitmap icon, String fileName) throws RemoteException {
+        final long token = Binder.clearCallingIdentity();
+        boolean success;
+        FileOutputStream os;
+        final File cacheDir = new File(ThemeUtils.SYSTEM_THEME_ICON_CACHE_DIR);
+        if (cacheDir.listFiles().length == 0) {
+            mIconCacheSize = 0;
+        }
+        try {
+            File outFile = new File(cacheDir, fileName);
+            os = new FileOutputStream(outFile);
+            icon.compress(Bitmap.CompressFormat.PNG, 90, os);
+            os.close();
+            FileUtils.setPermissions(outFile,
+                    FileUtils.S_IRWXU | FileUtils.S_IRWXG | FileUtils.S_IROTH,
+                    -1, -1);
+            mIconCacheSize += outFile.length();
+            if (mIconCacheSize > MAX_ICON_CACHE_SIZE) {
+                purgeIconCache();
+            }
+            success = true;
+        } catch (Exception e) {
+            success = false;
+            Log.w(TAG, "Unable to cache icon " + fileName, e);
+        }
+        Binder.restoreCallingIdentity(token);
+        return success;
+    }
+
+    private void purgeIconCache() {
+        Log.d(TAG, "Purging icon cahe of size " + mIconCacheSize);
+        File cacheDir = new File(ThemeUtils.SYSTEM_THEME_ICON_CACHE_DIR);
+        File[] files = cacheDir.listFiles();
+        Arrays.sort(files, mOldestFilesFirstComparator);
+        for (File f : files) {
+            if (!f.isDirectory()) {
+                final long size = f.length();
+                if(f.delete()) mIconCacheSize -= size;
+            }
+            if (mIconCacheSize <= PURGED_ICON_CACHE_SIZE) break;
+        }
+    }
+
     private boolean applyBootAnimation(String themePath) {
         boolean success = false;
         try {
@@ -830,6 +876,13 @@ public class ThemeService extends IThemeService.Stub {
             } else {
                 mWallpaperChangedByUs = false;
             }
+        }
+    };
+
+    private Comparator<File> mOldestFilesFirstComparator = new Comparator<File>() {
+        @Override
+        public int compare(File lhs, File rhs) {
+            return (int) (lhs.lastModified() - rhs.lastModified());
         }
     };
 }

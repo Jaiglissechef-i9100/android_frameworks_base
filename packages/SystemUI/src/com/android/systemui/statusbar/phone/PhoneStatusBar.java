@@ -3575,10 +3575,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                             | StatusBarManager.DISABLE_NOTIFICATION_TICKER))) {
                     boolean blacklisted = false;
                     // don't pass notifications that run in Hover to Ticker
-                    try {
-                        blacklisted = getNotificationManager().isPackageAllowedForHover(n.getPackageName());
-                    } catch (android.os.RemoteException ex) {
-                        // System is dead
+                    if (mHoverState == HOVER_ENABLED) {
+                        try {
+                            blacklisted = getNotificationManager().isPackageAllowedForHover(n.getPackageName());
+                        } catch (android.os.RemoteException ex) {
+                            // System is dead
+                        }
                     }
                     if (!blacklisted) mTicker.addEntry(n);
             }
@@ -3598,13 +3600,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     private class MyTicker extends Ticker {
+        private boolean hasTicked = false;
+
         MyTicker(Context context, View sb) {
             super(context, sb);
         }
 
         @Override
         public void tickerStarting() {
-            if (!mHaloActive) {
+	    if (!mHaloActive || mHoverState == HOVER_DISABLED) {
                 mStatusBarContents.setVisibility(View.GONE);
                 mCenterClockLayout.setVisibility(View.GONE);
                 mTickerView.setVisibility(View.VISIBLE);
@@ -3618,7 +3622,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         @Override
         public void tickerDone() {
-	    if (!mHaloActive) {
+	    if (!mHaloActive || mHoverState == HOVER_DISABLED) {
                 mStatusBarContents.setVisibility(View.VISIBLE);
                 mCenterClockLayout.setVisibility(View.VISIBLE);
                 mTickerView.setVisibility(View.GONE);
@@ -3632,7 +3636,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
 
         public void tickerHalting() {
-	    if (!mHaloActive) {
+	    if (!mHaloActive || mHoverState == HOVER_DISABLED) {
                 mStatusBarContents.setVisibility(View.VISIBLE);
                 mCenterClockLayout.setVisibility(View.VISIBLE);
                 mTickerView.setVisibility(View.GONE);

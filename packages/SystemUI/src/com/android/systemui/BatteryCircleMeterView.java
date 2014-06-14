@@ -184,6 +184,29 @@ public class BatteryCircleMeterView extends ImageView {
         mHandler = new Handler();
         mBatteryReceiver = new BatteryReceiver(mContext);
 
+        /*
+         * initialize vars
+         */
+        mPaintFont = new Paint();
+        mPaintFont.setAntiAlias(true);
+        mPaintFont.setDither(true);
+        mPaintFont.setStyle(Paint.Style.STROKE);
+
+        mPaintGray = new Paint(mPaintFont);
+        mPaintSystem = new Paint(mPaintFont);
+        mPaintRed = new Paint(mPaintFont);
+
+        // could not find the darker definition anywhere in resources
+        // do not want to use static 0x404040 color value. would break theming.
+        Resources res = getResources();
+        mPaintGray.setColor(res.getColor(com.android.systemui.R.color.batterymeter_frame_color));
+        mPaintRed.setColor(res.getColor(R.color.holo_red_light));
+
+        mPaintFont.setTextAlign(Align.CENTER);
+        mPaintFont.setFakeBoldText(true);
+
+        mPathEffect = new DashPathEffect(new float[]{3,2},0);
+
         updateSettings(mIsQuickSettings);
     }
 
@@ -424,7 +447,7 @@ public class BatteryCircleMeterView extends ImageView {
         float strokeWidth = mCircleSize / 7f;
         mPaintRed.setStrokeWidth(strokeWidth);
         mPaintSystem.setStrokeWidth(strokeWidth);
-        mPaintGray.setStrokeWidth(strokeWidth / 3.5f);
+        mPaintGray.setStrokeWidth(strokeWidth);
         // calculate rectangle for drawArc calls
         int pLeft = getPaddingLeft();
         mRectLeft = new RectF(pLeft + strokeWidth / 2.0f, 0 + strokeWidth / 2.0f, mCircleSize

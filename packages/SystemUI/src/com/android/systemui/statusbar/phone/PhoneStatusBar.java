@@ -24,7 +24,6 @@ import static com.android.systemui.statusbar.phone.BarTransitions.MODE_OPAQUE;
 import static com.android.systemui.statusbar.phone.BarTransitions.MODE_SEMI_TRANSPARENT;
 import static com.android.systemui.statusbar.phone.BarTransitions.MODE_TRANSLUCENT;
 import static com.android.systemui.statusbar.phone.BarTransitions.MODE_LIGHTS_OUT;
-import static com.android.systemui.statusbar.phone.BarTransitions.MODE_TRANSPARENT;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -47,6 +46,10 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.res.Configuration;
+<<<<<<< HEAD
+=======
+import android.content.res.ThemeConfig;
+>>>>>>> 8a07476... Modify config to support app specific themes [1/4]
 import android.content.res.Resources;
 import android.database.ContentObserver;
 import android.graphics.Canvas;
@@ -75,8 +78,12 @@ import android.provider.CalendarContract;
 import android.provider.CalendarContract.Events;
 import android.provider.Settings;
 import android.service.notification.StatusBarNotification;
+<<<<<<< HEAD
 import android.text.Editable;
 import android.text.TextWatcher;
+=======
+import android.telephony.MSimTelephonyManager;
+>>>>>>> 8a07476... Modify config to support app specific themes [1/4]
 import android.util.DisplayMetrics;
 import android.util.EventLog;
 import android.util.Log;
@@ -147,8 +154,11 @@ import com.android.systemui.statusbar.policy.LocationController;
 import com.android.systemui.statusbar.policy.NetworkController;
 import com.android.systemui.statusbar.policy.NotificationRowLayout;
 import com.android.systemui.statusbar.policy.OnSizeChangedListener;
+<<<<<<< HEAD
 
 import com.android.systemui.omni.StatusHeaderMachine;
+=======
+>>>>>>> 8a07476... Modify config to support app specific themes [1/4]
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -385,7 +395,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     int[] mAbsPos = new int[2];
     Runnable mPostCollapseCleanup = null;
 
+<<<<<<< HEAD
     // status bar brightness control
+=======
+    // last theme that was applied in order to detect theme change (as opposed
+    // to some other configuration change).
+    ThemeConfig mCurrentTheme;
+    private boolean mRecreating = false;
+
+>>>>>>> 8a07476... Modify config to support app specific themes [1/4]
     private boolean mBrightnessControl;
     private float mScreenWidth;
     private int mMinBrightness;
@@ -1051,7 +1069,16 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 .getDefaultDisplay();
         updateDisplaySize();
 
+<<<<<<< HEAD
         mLocationController = new LocationController(mContext); // will post a notification
+=======
+        ThemeConfig currentTheme = mContext.getResources().getConfiguration().themeConfig;
+        if (currentTheme != null) {
+            mCurrentTheme = (ThemeConfig)currentTheme.clone();
+        }
+
+        mLocationController = new LocationController(mContext);
+>>>>>>> 8a07476... Modify config to support app specific themes [1/4]
         mBatteryController = new BatteryController(mContext);
         mNetworkController = new NetworkController(mContext);
         mBluetoothController = new BluetoothController(mContext);
@@ -1860,6 +1887,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         if (DEBUG) Log.v(TAG, "addNavigationBar: about to add " + mNavigationBarView);
         if (mNavigationBarView == null) return;
 
+<<<<<<< HEAD
         mNavigationBarCanMove = DeviceUtils.isPhone(mContext) ?
                 Settings.System.getIntForUser(mContext.getContentResolver(),
                     Settings.System.NAVIGATION_BAR_CAN_MOVE, 1,
@@ -1868,6 +1896,14 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mNavigationRingConfig = ButtonsHelper.getNavRingConfig(mContext);
 
         mNavigationBarView.setNavigationBarCanMove(mNavigationBarCanMove);
+=======
+        ThemeConfig newTheme = mContext.getResources().getConfiguration().themeConfig;
+        if (newTheme != null &&
+                (mCurrentTheme == null || !mCurrentTheme.equals(newTheme))) {
+            // Nevermind, this will be re-created
+            return;
+        }
+>>>>>>> 8a07476... Modify config to support app specific themes [1/4]
 
         prepareNavigationBarView();
 
@@ -4545,6 +4581,20 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     void updateResources() {
         final Context context = mContext;
         final Resources res = context.getResources();
+
+        // detect theme change.
+        ThemeConfig newTheme = res.getConfiguration().themeConfig;
+        if (newTheme != null &&
+                (mCurrentTheme == null || !mCurrentTheme.equals(newTheme))) {
+            mCurrentTheme = (ThemeConfig)newTheme.clone();
+            recreateStatusBar();
+        } else {
+
+            if (mClearButton instanceof TextView) {
+                ((TextView)mClearButton).setText(context.getText(R.string.status_bar_clear_all_button));
+            }
+            loadDimens();
+        }
 
         // Update the QuickSettings container
         if (mQS != null) mQS.updateResources();

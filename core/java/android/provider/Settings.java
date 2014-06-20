@@ -1826,13 +1826,6 @@ public final class Settings {
             "bluetooth_discoverability_timeout";
 
         /**
-         * If all file types can be accepted over Bluetooth OBEX.
-         * @hide
-         */
-        public static final String BLUETOOTH_ACCEPT_ALL_FILES =
-            "bluetooth_accept_all_files";
-
-        /**
          * @deprecated Use {@link android.provider.Settings.Secure#LOCK_PATTERN_ENABLED}
          * instead
          */

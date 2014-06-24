@@ -464,12 +464,7 @@ public class ThemeService extends IThemeService.Stub {
 
     private boolean updateLockscreen() {
         boolean success = false;
-        if (HOLO_DEFAULT.equals(mPkgName)) {
-            WallpaperManager.getInstance(mContext).clearKeyguardWallpaper();
-            success = true;
-        } else {
-            success = setCustomLockScreenWallpaper();
-        }
+        success = setCustomLockScreenWallpaper();
 
         if (success) {
             mContext.sendBroadcastAsUser(new Intent(Intent.ACTION_KEYGUARD_WALLPAPER_CHANGED),
@@ -480,25 +475,23 @@ public class ThemeService extends IThemeService.Stub {
 
     private boolean setCustomLockScreenWallpaper() {
         try {
-            //Get input WP stream from the theme
-            Context themeCtx = mContext.createPackageContext(mPkgName, Context.CONTEXT_IGNORE_SECURITY);
-            AssetManager assetManager = themeCtx.getAssets();
-            String wpPath = ThemeUtils.getLockscreenWallpaperPath(assetManager);
-            if (wpPath == null) {
-                Log.w(TAG, "Not setting lockscreen wp because wallpaper file was not found.");
-                return false;
+            if (HOLO_DEFAULT.equals(mPkgName)) {
+                final Bitmap bmp = BitmapFactory.decodeResource(mContext.getResources(),
+                        com.android.internal.R.drawable.default_wallpaper);
+                WallpaperManager.getInstance(mContext).setKeyguardBitmap(bmp);
+            } else {
+                //Get input WP stream from the theme
+                Context themeCtx = mContext.createPackageContext(mPkgName, Context.CONTEXT_IGNORE_SECURITY);
+                AssetManager assetManager = themeCtx.getAssets();
+                String wpPath = ThemeUtils.getLockscreenWallpaperPath(assetManager);
+                if (wpPath == null) {
+                    Log.w(TAG, "Not setting lockscreen wp because wallpaper file was not found.");
+                    return false;
+                }
+                InputStream is = ThemeUtils.getInputStreamFromAsset(themeCtx, "file:///android_asset/" + wpPath);
+
+                WallpaperManager.getInstance(mContext).setKeyguardStream(is);
             }
-            InputStream is = ThemeUtils.getInputStreamFromAsset(themeCtx, "file:///android_asset/" + wpPath);
-
-            //Get outgoing wp path from settings
-            File wallpaperFile = LockscreenBackgroundUtil.getWallpaperFile(mContext);
-            wallpaperFile.createNewFile();
-            wallpaperFile.setReadable(true, false);
-            FileOutputStream out = new FileOutputStream(wallpaperFile);
-
-            //Decode bitmap to check it is ok and copy it over
-            Bitmap bitmap = BitmapFactory.decodeStream(is);
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
         } catch (Exception e) {
             Log.e(TAG, "There was an error setting lockscreen wp for pkg " + mPkgName, e);
             return false;

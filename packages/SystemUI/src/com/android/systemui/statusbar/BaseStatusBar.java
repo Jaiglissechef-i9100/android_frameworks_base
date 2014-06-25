@@ -925,6 +925,11 @@ public abstract class BaseStatusBar extends SystemUI implements
         return lp;
     }
 
+    public NotificationHelper getNotificationHelperInstance() {
+        if (mNotificationHelper == null) mNotificationHelper = new NotificationHelper(this, mContext);
+        return mNotificationHelper;
+    }
+
     public Hover getHoverInstance() {
         if(mHover == null) mHover = new Hover(this, mContext);
         return mHover;

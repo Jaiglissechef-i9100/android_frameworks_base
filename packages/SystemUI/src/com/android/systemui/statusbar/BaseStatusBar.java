@@ -240,6 +240,13 @@ public abstract class BaseStatusBar extends SystemUI implements
     // Notification peek
     protected NotificationPeek mNotificationPeek;
 
+    private Runnable mPanelCollapseRunnable = new Runnable() {
+        @Override
+        public void run() {
+            animateCollapsePanels(CommandQueue.FLAG_EXCLUDE_NONE);
+        }
+    };
+
     /**
      * An interface for navigation key bars to allow status bars to signal which keys are
      * currently of interest to the user.<br>
@@ -1836,6 +1843,7 @@ public abstract class BaseStatusBar extends SystemUI implements
         }
         updateExpansionStates();
         updateNotificationIcons();
+        mHandler.removeCallbacks(mPanelCollapseRunnable);
 
         if (!mPowerManager.isScreenOn()) {
             // screen off - check if peek is enabled

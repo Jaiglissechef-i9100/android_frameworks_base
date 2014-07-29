@@ -61,18 +61,9 @@ public class NotificationHostView extends FrameLayout {
     private static final int MSG_NOTIFICATION_REMOVE = 1;
 
     private static final float SWIPE = 0.2f;
-<<<<<<< HEAD
-    private static final int ANIMATION_MAX_DURATION = 500;
-    private static final int PPS = 1000;
-<<<<<<< HEAD
-=======
     private static final int ANIMATION_MAX_DURATION = 300;
     private static final int PPS = 2000;
->>>>>>> parent of 6185489... [1/2] FW: LockScreen Notifications by AOSPAL
     private static final int MAX_ALPHA = 225; //AOSPAL: 150
-=======
-    private static final int MAX_ALPHA = 150;
->>>>>>> parent of af3321c... derp
 
     //Here we store dimissed notifications so we don't add them again in onFinishInflate
     private static HashMap<String, StatusBarNotification> mDismissedNotifications = new HashMap<String, StatusBarNotification>();

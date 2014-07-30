@@ -155,24 +155,27 @@ public class KeyguardViewManager {
             synchronized (this) {
                 updateSettings();
                 setKeyguardParams();
-                mViewManager.updateViewLayout(mKeyguardHost, mWindowLayoutParams);
+                try {
+                	mViewManager.updateViewLayout(mKeyguardHost, mWindowLayoutParams);
+            	} catch(IllegalArgumentException e) {
+                	// Call yo mom call yo dad!
+            	}
             }
         }
     }
 
     private void updateSettings() {
-    	mBlurEnabled = Settings.System.getInt(mContext.getContentResolver(),
-    			Settings.System.LOCKSCREEN_BLUR_BEHIND, 0) == 1;
-
-        mLockscreenNotifications = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.LOCKSCREEN_NOTIFICATIONS, mLockscreenNotifications ? 1 : 0) == 1;
-
+	mLockscreenNotifications = Settings.System.getInt(mContext.getContentResolver(),
+                Settings.System.LOCKSCREEN_NOTIFICATIONS, 0) == 1;
         if(mLockscreenNotifications && mNotificationViewManager == null) {
             mNotificationViewManager = new NotificationViewManager(mContext, this);
         } else if(!mLockscreenNotifications && mNotificationViewManager != null) {
             mNotificationViewManager.unregisterListeners();
             mNotificationViewManager = null;
-    	}
+        }
+
+    	mBlurEnabled = Settings.System.getInt(mContext.getContentResolver(),
+    			Settings.System.LOCKSCREEN_BLUR_BEHIND, 0) == 1;
 
 	if (mBlurEnabled) {
             isSeeThroughEnabled = true;
@@ -667,18 +670,17 @@ public class KeyguardViewManager {
         mKeyguardView.initializeSwitchingUserState(options != null &&
                 options.getBoolean(IS_SWITCHING_USER));
 
-        if (mLockscreenNotifications) {
+	if (mLockscreenNotifications) {
             mNotificationView = (NotificationHostView)mKeyguardView.findViewById(R.id.notification_host_view);
             mNotificationViewManager.setHostView(mNotificationView);
             mNotificationViewManager.onScreenTurnedOff();
-            mNotificationView.addNotifications();
         }
 
         // HACK
         // The keyguard view will have set up window flags in onFinishInflate before we set
         // the view mediator callback. Make sure it knows the correct IME state.
         if (mViewMediatorCallback != null) {
-            if (mLockscreenNotifications)
+	    if (mLockscreenNotifications)
                 mNotificationView.setViewMediator(mViewMediatorCallback);
 
             KeyguardPasswordView kpv = (KeyguardPasswordView) mKeyguardView.findViewById(
@@ -778,7 +780,7 @@ public class KeyguardViewManager {
         if (mKeyguardView != null) {
             mKeyguardView.onScreenTurnedOff();
         }
-        if (mLockscreenNotifications) {
+	if (mLockscreenNotifications) {
             mNotificationViewManager.onScreenTurnedOff();
         }
     }
@@ -828,8 +830,7 @@ public class KeyguardViewManager {
                 Slog.w(TAG, "Exception calling onShown():", e);
             }
         }
-
-        if (mLockscreenNotifications) {
+	if (mLockscreenNotifications) {
             mNotificationViewManager.onScreenTurnedOn();
         }
     }
@@ -846,7 +847,7 @@ public class KeyguardViewManager {
     public synchronized void hide() {
         if (DEBUG) Log.d(TAG, "hide()");
 
-        if (mLockscreenNotifications) {
+	if (mLockscreenNotifications) {
             mNotificationViewManager.onDismiss();
         }
 

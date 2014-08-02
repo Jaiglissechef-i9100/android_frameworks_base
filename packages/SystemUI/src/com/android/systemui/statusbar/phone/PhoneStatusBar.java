@@ -124,7 +124,6 @@ import com.android.systemui.statusbar.powerwidget.PowerWidget;
 import com.android.systemui.statusbar.policy.WeatherPanel;
 
 import com.android.systemui.R;
-import com.android.systemui.statusbar.AppSidebar;
 import com.android.systemui.ReminderMessageView;
 import com.android.systemui.statusbar.BaseStatusBar;
 import com.android.systemui.statusbar.CommandQueue;
@@ -552,9 +551,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.REMINDER_ALERT_INTERVAL), false, this,
-                    UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.APP_SIDEBAR_POSITION), false, this,
                     UserHandle.USER_ALL);
             update();
         }
@@ -1063,7 +1059,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 mNavigationBarView =
                     (NavigationBarView) View.inflate(context, R.layout.navigation_bar, null);
             }
-            removeSidebarView();
 
             mNavigationBarView.setDisabledFlags(mDisabled);
             mNavigationBarView.setBar(this);
@@ -1083,14 +1078,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             /* ChaosLab: GestureAnywhere - END */
         }
 
-<<<<<<< HEAD
-=======
-        // Setup pie container if enabled
-        attachPieContainer(isPieEnabled());
-
-        addSidebarView();
-
->>>>>>> fbe6f12... Implement new-ER ChaOS sidebar / Add ChaOS labs
         // figure out which pixel-format to use for the status bar.
         mPixelFormat = PixelFormat.OPAQUE;
 
@@ -1436,7 +1423,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         // receive broadcasts
         IntentFilter filter = new IntentFilter();
-        filter.addAction(Intent.ACTION_CONFIGURATION_CHANGED);
         filter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
         filter.addAction(Intent.ACTION_SCREEN_OFF);
         filter.addAction(Intent.ACTION_SCREEN_ON);

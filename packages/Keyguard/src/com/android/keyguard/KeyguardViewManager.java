@@ -124,10 +124,11 @@ public class KeyguardViewManager {
     private int mBackgroundStyle;
     private int mBackgroundColor;
 
+    private boolean mUnlockKeyDown = false;
+
     private NotificationHostView mNotificationView;
     private NotificationViewManager mNotificationViewManager;
-    private boolean mLockscreenNotifications = true;
-    private boolean mUnlockKeyDown = false;
+    private boolean mLockscreenNotifications = false;
 
     private static final String WALLPAPER_IMAGE_PATH =
             "/data/data/com.android.settings/files/lockscreen_wallpaper";
@@ -156,14 +157,13 @@ public class KeyguardViewManager {
 
         void observe() {
             ContentResolver resolver = mContext.getContentResolver();
-
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.LOCKSCREEN_SEE_THROUGH), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.LOCKSCREEN_BLUR_BEHIND), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.LOCKSCREEN_BLUR_RADIUS), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
+	    resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.LOCKSCREEN_NOTIFICATIONS), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.LOCKSCREEN_BACKGROUND_STYLE), false, this);
@@ -713,7 +713,7 @@ public class KeyguardViewManager {
         if(mCustomBackground != null) {
         	mKeyguardHost.setCustomBackground(mCustomBackground);
         }
-
+        
         updateUserActivityTimeoutInWindowLayoutParams();
         mViewManager.updateViewLayout(mKeyguardHost, mWindowLayoutParams);
 
@@ -725,7 +725,6 @@ public class KeyguardViewManager {
         if (v != null) {
             mKeyguardHost.removeView(v);
         }
-
         final LayoutInflater inflater = LayoutInflater.from(mContext);
         View view = inflater.inflate(R.layout.keyguard_host_view, mKeyguardHost, true);
         mKeyguardView = (KeyguardHostView) view.findViewById(R.id.keyguard_host_view);
@@ -876,7 +875,7 @@ public class KeyguardViewManager {
             if (callback != null) {
                 if (mKeyguardHost.getVisibility() == View.VISIBLE) {
                     // Keyguard may be in the process of being shown, but not yet
-                    // updated with the window manager... give it a chance to do so.
+                    // updated with the window manager...  give it a chance to do so.
                     mKeyguardHost.post(new Runnable() {
                         @Override
                         public void run() {

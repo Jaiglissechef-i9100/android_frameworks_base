@@ -113,6 +113,7 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback {
 
     public static final String TAG = "HaloLauncher";
 
+    private static final int STATE_FIRST_RUN = 0;
     private static final int STATE_IDLE = 1;
     private static final int STATE_HIDDEN = 2;
     private static final int STATE_SILENT = 3;
@@ -155,7 +156,8 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback {
     private NotificationData mNotificationData;
     private String mNotificationText = "";
 
-    private Paint mPaintHolo = new Paint();
+    private Paint mPaintHoloGrey = new Paint();
+    private Paint mPaintWhite = new Paint();
     private Paint mPaintHoloRed = new Paint();
 
     private boolean mAttached = false;
@@ -179,14 +181,14 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback {
     private int mStatusB_X;
     private int mMarkerIndex = -1;
     private int mDismissDelay = 100;
-    private int mNotifTitleColor;
-    private int mNotifDescColor;
-    
+
     private int oldIconIndex = -1;
     private float initialX = 0;
     private float initialY = 0;
     private float mHaloSize = 1.0f;
     private float mStatusTextSize = 0f;
+
+    private int mHaloColor = 0xff33b5e5;
 
     // Halo dock position
     SharedPreferences preferences;
@@ -212,25 +214,11 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback {
                     Settings.System.HALO_NOTIFY_COUNT), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.HAPTIC_FEEDBACK_ENABLED), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-            		Settings.System.HALO_COLOR), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-            		Settings.System.HALO_CIRCLE_COLOR), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-            		Settings.System.HALO_EFFECT_COLOR), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-            		Settings.System.HALO_NOTIFICATION_TITLE_COLOR), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-            		Settings.System.HALO_NOTIFICATION_DESC_COLOR), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-            		Settings.System.HALO_SPEECH_BUBBLE_COLOR), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-            		Settings.System.HALO_TEXT_COLOR), false, this);
         }
 
         @Override
         public void onChange(boolean selfChange) {
-            final ContentResolver resolver = mContext.getContentResolver();
+            ContentResolver resolver = mContext.getContentResolver();
             mInteractionReversed =
                     Settings.System.getInt(resolver, Settings.System.HALO_REVERSED, 1) == 1;
             mHideTicker =
@@ -240,7 +228,7 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback {
             if (!selfChange) {
                 //mEffect.wake();
                 mBar.restartHalo();
-                //mEffect.ping(mPaintHoloBlue, HaloEffect.WAKE_TIME);
+                //mEffect.ping(mPaintHoloGrey, HaloEffect.WAKE_TIME);
                 mEffect.nap(HaloEffect.SNAP_TIME + 1000);
                 if (mHideTicker) mEffect.sleep(HaloEffect.SNAP_TIME + HaloEffect.NAP_TIME + HaloEffect.EXTRA_SLEEP_TIME, HaloEffect.SLEEP_TIME, false);
             }
@@ -294,11 +282,13 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback {
         mKeyguardManager = (KeyguardManager) mContext.getSystemService(Context.KEYGUARD_SERVICE);
 
         IntentFilter filter = new IntentFilter(Intent.ACTION_SCREEN_ON);
+
         filter.addAction(Intent.ACTION_USER_PRESENT);
+
         mReceiver = new ScreenReceiver();
         mContext.registerReceiver(mReceiver, filter);
 
-        final ContentResolver resolver = mContext.getContentResolver();
+        ContentResolver resolver = mContext.getContentResolver();
 
         // Init variables
         mInteractionReversed =
@@ -308,6 +298,7 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback {
         mNinjaMode =
                 Settings.System.getInt(resolver, Settings.System.HALO_NINJA, 0) == 1;
         mHaloSize = Settings.System.getFloat(resolver, Settings.System.HALO_SIZE, 1.0f);
+        mHaloColor = Settings.System.getInt(resolver, Settings.System.HALO_COLOR, 0xff33b5e5);
         mHapticFeedback = Settings.System.getInt(resolver,
                     Settings.System.HAPTIC_FEEDBACK_ENABLED, 1) != 0;
         mIconSize = (int)(mContext.getResources().getDimensionPixelSize(R.dimen.halo_bubble_size) * mHaloSize);
@@ -315,8 +306,10 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback {
         mTriggerPos = getWMParams();
 
         // Init colors
-        mPaintHolo.setAntiAlias(true);
-        mPaintHolo.setColor(0xff33b5e5);
+        mPaintHoloGrey.setAntiAlias(true);
+        mPaintHoloGrey.setColor(mHaloColor);
+        mPaintWhite.setAntiAlias(true);
+        mPaintWhite.setColor(0xfff0f0f0);
         mPaintHoloRed.setAntiAlias(true);
         mPaintHoloRed.setColor(0xffcc0000);
 
@@ -337,8 +330,6 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback {
               PixelFormat.TRANSLUCENT);
         lp.gravity = Gravity.LEFT|Gravity.TOP;
         mWindowManager.addView(mEffect, lp);
-        
-        updateHaloColors();
     }
 
     private void initControl() {
@@ -360,27 +351,73 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback {
         int msavePositionX = preferences.getInt(KEY_HALO_POSITION_X, 0);
         int msavePositionY = preferences.getInt(KEY_HALO_POSITION_Y, mScreenHeight / 2 - mIconHalfSize);
 
-        if (msavePositionY < 0) mEffect.setHaloY(0);
-        float mTmpHaloY = (float) msavePositionY / mScreenWidth * (mScreenHeight);
-        if (msavePositionY > mScreenHeight-mIconSize) {
-            mEffect.setHaloY((int)mTmpHaloY);
-        } else {
-            mEffect.setHaloY(isLandscapeMod() ? msavePositionY : (int)mTmpHaloY);
+        if (preferences.getBoolean(KEY_HALO_FIRST_RUN, true)) {
+            mState = STATE_FIRST_RUN;
+            preferences.edit().putBoolean(KEY_HALO_FIRST_RUN, false).apply();
         }
- 
-        if (mState == STATE_HIDDEN || mState == STATE_SILENT) {
-            if (mNinjaMode && getHaloMsgCount()-getHidden() < 1) {
-                mEffect.setHaloX((mTickerLeft ? -mIconSize : mScreenWidth));
+        
+        if (!mFirstStart) {
+            if (msavePositionY < 0) mEffect.setHaloY(0);
+            float mTmpHaloY = (float) msavePositionY / mScreenWidth * (mScreenHeight);
+            if (msavePositionY > mScreenHeight-mIconSize) {
+                mEffect.setHaloY((int)mTmpHaloY);
             } else {
-                mEffect.setHaloX((int)(mTickerLeft ? -mIconSize*0.8f : mScreenWidth - mIconSize*0.2f));
+                mEffect.setHaloY(isLandscapeMod() ? msavePositionY : (int)mTmpHaloY);
             }
-            final int triggerWidth = (int)(mTickerLeft ? -mIconSize*0.7f : mScreenWidth - mIconSize*0.3f);
-            updateTriggerPosition(triggerWidth, mEffect.mHaloY);
+ 
+            if (mState == STATE_HIDDEN || mState == STATE_SILENT) {
+                if (mNinjaMode && getHaloMsgCount()-getHidden() < 1) {
+                    mEffect.setHaloX((mTickerLeft ? -mIconSize : mScreenWidth));
+                } else {
+                    mEffect.setHaloX((int)(mTickerLeft ? -mIconSize*0.8f : mScreenWidth - mIconSize*0.2f));
+                }
+                final int triggerWidth = (int)(mTickerLeft ? -mIconSize*0.7f : mScreenWidth - mIconSize*0.3f);
+                updateTriggerPosition(triggerWidth, mEffect.mHaloY);
+            } else {
+                mEffect.nap(500);
+                if (mHideTicker) mEffect.sleep(HaloEffect.SNAP_TIME + HaloEffect.NAP_TIME + HaloEffect.EXTRA_SLEEP_TIME, HaloEffect.SLEEP_TIME, false);
+            }
         } else {
-            mEffect.nap(500);
-            if (mHideTicker) mEffect.sleep(HaloEffect.SNAP_TIME + HaloEffect.NAP_TIME + HaloEffect.EXTRA_SLEEP_TIME, HaloEffect.SLEEP_TIME, false);
-        }
+            // Do the startup animations only once
+            mFirstStart = false;
+            // Halo dock position
+            mTickerLeft = msavePositionX == 0 ? true : false;
+            updateTriggerPosition(msavePositionX, msavePositionY);
+            mEffect.updateResources(mTickerLeft);
+            mEffect.setHaloY(msavePositionY);         
 
+            // TODO: clean up the nested timers
+            // run only once so a low priority
+            if (mState == STATE_FIRST_RUN) {
+                mEffect.setHaloX(msavePositionX + (mTickerLeft ? -mIconSize : mIconSize));
+                mEffect.setHaloOverlay(HaloProperties.Overlay.MESSAGE, 1f);
+                mHandler.postDelayed(new Runnable() {
+                    public void run() {
+                        mEffect.wake();
+                        mEffect.ticker(mContext.getResources().getString(R.string.halo_tutorial1), 0, 3000);
+                        mHandler.postDelayed(new Runnable() {
+                            public void run() {
+                                mEffect.ticker(mContext.getResources().getString(R.string.halo_tutorial2), 0, 3000);
+                                mHandler.postDelayed(new Runnable() {
+                                    public void run() {
+                                        mEffect.ticker(mContext.getResources().getString(R.string.halo_tutorial3), 0, 3000);
+                                        mHandler.postDelayed(new Runnable() {
+                                            public void run() {
+                                                mState = STATE_IDLE;                                        
+                                                mEffect.nap(0);
+                                                mEffect.setHaloOverlay(HaloProperties.Overlay.NONE, 0f);
+                                                if (mHideTicker) mEffect.sleep(HaloEffect.SNAP_TIME + HaloEffect.NAP_TIME
+                                                        + HaloEffect.EXTRA_SLEEP_TIME, HaloEffect.SLEEP_TIME, false);                                        
+                                            }}, 6000);
+                                    }}, 6000);
+                            }}, 6000);
+                    }}, 1000);
+            } else {
+                mEffect.setHaloX(msavePositionX);
+                mEffect.nap(500);
+                if (mHideTicker) mEffect.sleep(HaloEffect.SNAP_TIME + HaloEffect.NAP_TIME + HaloEffect.EXTRA_SLEEP_TIME, HaloEffect.SLEEP_TIME, false);
+            }
+        }
     }
     
     private boolean isLandscapeMod() {
@@ -391,32 +428,6 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback {
         if (mEffect != null) mEffect.invalidate();
     }
 
-    private void updateHaloColors(){
-    	mEffect.mEnableCustomColor = Settings.System.getInt(mContext.getContentResolver(), Settings.System.HALO_COLOR, 0) == 1;
-        if(mEffect.mEnableCustomColor) {
-        	mEffect.setHaloCircleColor(
-        			Settings.System.getInt(mContext.getContentResolver(), Settings.System.HALO_CIRCLE_COLOR, 0xFF33B5E5)
-        			);
-        	mEffect.setHaloSpeechColor(
-        			Settings.System.getInt(mContext.getContentResolver(), Settings.System.HALO_SPEECH_BUBBLE_COLOR, 0xff086a99)
-        			);
-        	mEffect.setHaloTextColor(
-        			Settings.System.getInt(mContext.getContentResolver(), Settings.System.HALO_TEXT_COLOR, 0xffffffff)
-        			);
-        	mPaintHolo.setColor(
-        			Settings.System.getInt(mContext.getContentResolver(), Settings.System.HALO_EFFECT_COLOR, 0xff33b5e5)
-        			);
-        	mNotifTitleColor = 
-        			Settings.System.getInt(mContext.getContentResolver(), Settings.System.HALO_NOTIFICATION_TITLE_COLOR, 0xffffffff);
-        	mNotifDescColor = 
-        			Settings.System.getInt(mContext.getContentResolver(), Settings.System.HALO_NOTIFICATION_DESC_COLOR, 0xff999999);
-        } else {
-        	mEffect.mHaloBg.clearColorFilter();
-        	mEffect.clearColorFilters();
-        	mPaintHolo.setColor(0xFF33B5E5);
-        }
-    }
-    
     private void updateTriggerPosition(int x, int y) {
         try {
             mTriggerPos.x = x;
@@ -580,6 +591,9 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
+
+        // Prevent any kind of interaction while HALO explains itself
+        if (mState == STATE_FIRST_RUN) return true;
 
         mEffect.onTouchEvent(event);
         mGestureDetector.onTouchEvent(event);
@@ -1114,41 +1128,7 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback {
         public void ticker(int delay, int startDuration, boolean flip) {
 
             setHaloContentHeight(mContext.getResources().getDimensionPixelSize(R.dimen.notification_min_height));
-            mHaloTickerContent.setVisibility(View.VISIBLE); 
-            
-            /* 
-             * This should work for every standard text notification
-             * By writing a recursive function getting all textviews and logging its text,
-             * I found out the following:
-             * The title is normally child 0 of child 0 of child 0 of mHaloTickerContent.
-             * The description normally is child 0 of child 3 of child 0 of mHaloTickerContent.
-             * If you know an easier way, to change title/description color, please let me know.
-             */
-            if(mEffect.mEnableCustomColor){
-                ViewGroup vg = (ViewGroup)mHaloTickerContent;
-                TextView tv;
-            	if(vg.getChildAt(0) instanceof LinearLayout){
-            		vg = (ViewGroup)vg.getChildAt(0);
-            		if(vg.getChildAt(0) instanceof LinearLayout){
-            			vg = (ViewGroup)vg.getChildAt(0);
-            			if(vg.getChildAt(0) instanceof TextView){
-            				tv = (TextView)vg.getChildAt(0);
-                    		tv.setTextColor(mNotifTitleColor);
-            			}
-            		}
-            	}
-                vg = (ViewGroup)mHaloTickerContent;
-            	if(vg.getChildAt(0) instanceof LinearLayout){
-            		vg = (ViewGroup)vg.getChildAt(0);
-            		if(vg.getChildAt(3) instanceof LinearLayout){
-            			vg = (ViewGroup)vg.getChildAt(3);
-            			if(vg.getChildAt(0) instanceof TextView){
-            				tv = (TextView)vg.getChildAt(0);
-            				tv.setTextColor(mNotifDescColor);
-            			}
-            		}
-            	}
-            }
+            mHaloTickerContent.setVisibility(View.VISIBLE);
             mHaloTextView.setVisibility(View.GONE);
             updateResources(mTickerLeft);
 
@@ -1169,7 +1149,7 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback {
             }
             if (flip) flipContent(500, delay);
         }
-        
+
         public void ping(final Paint paint, final long delay) {
             if ((!mPingAllowed && paint != mPaintHoloRed)
                     && mGesture != GESTURE_TASK) return;
@@ -1522,7 +1502,7 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback {
     }
 
     void clearTicker() {
-        mEffect.setNotificationIcon(null);
+        mEffect.mHaloIcon.setImageDrawable(null);
         mEffect.msgNumberAlphaAnimator.cancel(true);
         mEffect.msgNumberFlipAnimator.cancel(true);
         mEffect.tickerAnimator.cancel(true);
@@ -1550,7 +1530,8 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback {
         mCurrentNotficationEntry = entry;
 
         // set the avatar
-        mEffect.setNotificationIcon(new BitmapDrawable(mContext.getResources(), entry.getRoundIcon()));
+        mEffect.setHaloOverlay(HaloProperties.Overlay.NONE,0f);
+        mEffect.mHaloIcon.setImageDrawable(new BitmapDrawable(mContext.getResources(), entry.getRoundIcon()));
 
         if (showContent && mState != STATE_SILENT) {
             if (entry.haloContent != null) {
@@ -1586,7 +1567,7 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback {
         }
         mEffect.animateHaloBatch(n.number, -1, alwaysFlip, delay, msgType);
     }
- 
+
     public void updateTicker(StatusBarNotification notification) {
         loadLastNotification(true);
     }
@@ -1615,19 +1596,23 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback {
                     if (mIsNotificationNew) {
                         mNotificationText = text;
                         mLastNotificationEntry = entry;
-                        if (mState == STATE_IDLE || mState == STATE_HIDDEN) {
-                            if (mState == STATE_HIDDEN) clearTicker();
-                            mEffect.wake();
-                            mEffect.nap(HaloEffect.NAP_DELAY + HaloEffect.WAKE_TIME * 2);
-                            if (mHideTicker) mEffect.sleep(HaloEffect.SLEEP_DELAY + HaloEffect.WAKE_TIME * 2, HaloEffect.SLEEP_TIME, false);
-                        } else if (mNinjaMode && mState == STATE_SILENT) {
-                            mEffect.sleep(HaloEffect.WAKE_TIME * 3, HaloEffect.SLEEP_TIME, true);
-                        }
-                        boolean showMsgBox = Settings.System.getInt(mContext.getContentResolver(), Settings.System.HALO_MSGBOX, 1) == 1;
-                        tick(entry, HaloEffect.WAKE_TIME * 2, 1000, true, showMsgBox, false);
+                        if (mState != STATE_FIRST_RUN) {
+                            if (mState == STATE_IDLE || mState == STATE_HIDDEN) {
+                                if (mState == STATE_HIDDEN) clearTicker();
+                                mEffect.wake();
+                                mEffect.nap(HaloEffect.NAP_DELAY + HaloEffect.WAKE_TIME * 2);
+                                if (mHideTicker) mEffect.sleep(HaloEffect.SLEEP_DELAY + HaloEffect.WAKE_TIME * 2, HaloEffect.SLEEP_TIME, false);
+                            } else if (mNinjaMode && mState == STATE_SILENT) {
+                                mEffect.sleep(HaloEffect.WAKE_TIME * 3, HaloEffect.SLEEP_TIME, true);
+                            }
+                            boolean showMsgBox = Settings.System.getInt(mContext.getContentResolver(), Settings.System.HALO_MSGBOX, 1) == 1;
+                            tick(entry, HaloEffect.WAKE_TIME * 2, 1000, true, showMsgBox, false);
 
-                        // Pop while not tasking, only if notification is certified fresh
-                        if (mGesture != GESTURE_TASK && mState != STATE_SILENT) mEffect.ping(mPaintHolo, HaloEffect.WAKE_TIME * 2);
+                            // Pop while not tasking, only if notification is certified fresh
+                            if (mGesture != GESTURE_TASK && mState != STATE_SILENT) {
+                                mEffect.ping(mPaintHoloGrey, HaloEffect.WAKE_TIME * 2);
+                            }
+                        }
                     }
                     break;
                 }
@@ -1777,7 +1762,7 @@ public class Halo extends FrameLayout implements Ticker.TickerCallback {
                                 if (mHideTicker) mEffect.sleep(HaloEffect.SLEEP_DELAY + HaloEffect.WAKE_TIME * 2, HaloEffect.SLEEP_TIME, false);
                                 boolean showMsgBox = Settings.System.getInt(resolver, Settings.System.HALO_MSGBOX, 1) == 1;
                                 tick(entry, HaloEffect.WAKE_TIME * 2, 1000, false, showMsgBox, false);
-                                mEffect.ping(mPaintHolo, HaloEffect.WAKE_TIME * 2);
+                                mEffect.ping(mPaintHoloGrey, HaloEffect.WAKE_TIME * 2);
                                 mPingNewcomer = false;
                             }
                     }

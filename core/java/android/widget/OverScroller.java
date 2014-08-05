@@ -377,7 +377,6 @@ public class OverScroller {
      */
     public void startScroll(int startX, int startY, int dx, int dy, int duration) {
         mMode = SCROLL_MODE;
-        mPm.cpuBoost(1500000);
         mScrollerX.startScroll(startX, dx, duration);
         mScrollerY.startScroll(startY, dy, duration);
     }
@@ -448,7 +447,6 @@ public class OverScroller {
             }
         }
 
-        mPm.cpuBoost(1500000);
         mMode = FLING_MODE;
         mScrollerX.fling(startX, velocityX, minX, maxX, overX);
         mScrollerY.fling(startY, velocityY, minY, maxY, overY);

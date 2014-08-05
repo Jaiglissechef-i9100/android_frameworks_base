@@ -48,7 +48,7 @@ public class WeatherText extends TextView {
         super.onAttachedToWindow();
         if (!mAttached) {
             mAttached = true;
-            IntentFilter filter = new IntentFilter("com.aokp.romcontrol.INTENT_WEATHER_UPDATE");
+            IntentFilter filter = new IntentFilter("com.android.settings.INTENT_WEATHER_UPDATE");
             mContext.registerReceiver(weatherReceiver, filter, null, getHandler());
         }
     }

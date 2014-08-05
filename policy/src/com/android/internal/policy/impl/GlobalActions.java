@@ -40,6 +40,7 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.net.ConnectivityManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -53,6 +54,7 @@ import android.os.Vibrator;
 import android.provider.Settings;
 import android.service.dreams.DreamService;
 import android.service.dreams.IDreamManager;
+import android.service.gesture.IEdgeGestureService;
 import android.telephony.PhoneStateListener;
 import android.telephony.ServiceState;
 import android.telephony.TelephonyManager;
@@ -105,6 +107,8 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     private final WindowManagerFuncs mWindowManagerFuncs;
     private final AudioManager mAudioManager;
     private final IDreamManager mDreamManager;
+    private IEdgeGestureService mEdgeGestureService;
+    private Object mServiceAquireLock = new Object();
 
     private ArrayList<Action> mItems;
     private GlobalActionsDialog mDialog;
@@ -333,7 +337,6 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                     }
                 });
         }
-
         for (final ButtonConfig config : powerMenuConfig) {
             // power off
             if (config.getClickAction().equals(PolicyConstants.ACTION_POWER_OFF)) {
@@ -396,7 +399,6 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                             return true;
                         }
                     });
-
 	    // next: screenrecord
             } else if (config.getClickAction().equals(PolicyConstants.ACTION_SCREENRECORD)) {
             mItems.add(
@@ -415,10 +417,9 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                         return true;
                     }
                 });
-
-        // CyanogenMod profiles
-	} else if (config.getClickAction().equals(PolicyConstants.ACTION_PROFILE)) {
-            mItems.add(
+            // CyanogenMod profiles
+            } else if (config.getClickAction().equals(PolicyConstants.ACTION_PROFILE)) {
+                mItems.add(
                     new SinglePressAction(PolicyHelper.getPowerMenuIconImage(mContext,
                             config.getClickAction(), config.getIcon(), true),
                             config.getClickActionDescription()) {
@@ -671,6 +672,17 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         if (mExpandDesktopModeOn != null) {
             mExpandDesktopModeOn.updateState(mExpandDesktopState);
         }
+
+        // Global menu is showing. Notify EdgeGestureService.
+        IEdgeGestureService edgeGestureService = getEdgeGestureService();
+        try {
+            if (edgeGestureService != null) {
+                edgeGestureService.setOverwriteImeIsActive(true);
+            }
+        } catch (RemoteException e) {
+             mEdgeGestureService = null;
+        }
+
         mAdapter.notifyDataSetChanged();
         mDialog.getWindow().setType(WindowManager.LayoutParams.TYPE_KEYGUARD_DIALOG);
 
@@ -709,6 +721,15 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 // ignore this
                 Log.w(TAG, ie);
             }
+        }
+        // Global menu dismiss. Notify EdgeGestureService.
+        IEdgeGestureService edgeGestureService = getEdgeGestureService();
+        try {
+            if (edgeGestureService != null) {
+                edgeGestureService.setOverwriteImeIsActive(false);
+            }
+        } catch (RemoteException e) {
+             mEdgeGestureService = null;
         }
     }
 
@@ -1271,6 +1292,19 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
         mContext.sendBroadcastAsUser(intent, UserHandle.ALL);
         if (!mHasTelephony) {
             mAirplaneState = on ? ToggleAction.State.On : ToggleAction.State.Off;
+        }
+    }
+
+    /**
+     * If not set till now get EdgeGestureService.
+     */
+    private IEdgeGestureService getEdgeGestureService() {
+        synchronized (mServiceAquireLock) {
+            if (mEdgeGestureService == null) {
+                mEdgeGestureService = IEdgeGestureService.Stub.asInterface(
+                            ServiceManager.getService("edgegestureservice"));
+            }
+            return mEdgeGestureService;
         }
     }
 

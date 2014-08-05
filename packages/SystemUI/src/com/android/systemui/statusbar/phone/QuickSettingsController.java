@@ -33,7 +33,6 @@ import static com.android.internal.util.beanstalk.QSConstants.TILE_CUSTOM;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_CUSTOM_KEY;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_DELIMITER;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_EXPANDEDDESKTOP;
-import static com.android.internal.util.beanstalk.QSConstants.TILE_FCHARGE;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_IMESWITCHER;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_LOCATION;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_LOCKSCREEN;
@@ -42,11 +41,9 @@ import static com.android.internal.util.beanstalk.QSConstants.TILE_MOBILEDATA;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_MUSIC;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_NETWORKMODE;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_NFC;
-import static com.android.internal.util.beanstalk.QSConstants.TILE_PAPIE;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_QUICKRECORD;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_QUIETHOURS;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_RINGER;
-import static com.android.internal.util.beanstalk.QSConstants.TILE_SCREENSHOT;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_SCREENTIMEOUT;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_SETTINGS;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_SHAKE;
@@ -98,7 +95,6 @@ import com.android.systemui.quicksettings.CompassTile;
 import com.android.systemui.quicksettings.ContactTile;
 import com.android.systemui.quicksettings.CustomTile;
 import com.android.systemui.quicksettings.ExpandedDesktopTile;
-import com.android.systemui.quicksettings.FChargeTile;
 import com.android.systemui.quicksettings.LocationTile;
 import com.android.systemui.quicksettings.InputMethodTile;
 import com.android.systemui.quicksettings.LteTile;
@@ -107,13 +103,11 @@ import com.android.systemui.quicksettings.MobileNetworkTypeTile;
 import com.android.systemui.quicksettings.MusicTile;
 import com.android.systemui.quicksettings.InternalMemory;
 import com.android.systemui.quicksettings.NfcTile;
-import com.android.systemui.quicksettings.PaPieTile;
 import com.android.systemui.quicksettings.PreferencesTile;
 import com.android.systemui.quicksettings.QuickSettingsTile;
 import com.android.systemui.quicksettings.QuickRecordTile;
 import com.android.systemui.quicksettings.QuietHoursTile;
 import com.android.systemui.quicksettings.RingerModeTile;
-import com.android.systemui.quicksettings.ScreenshotTile;
 import com.android.systemui.quicksettings.ScreenTimeoutTile;
 import com.android.systemui.quicksettings.SleepScreenTile;
 import com.android.systemui.quicksettings.ShakeEventTile;
@@ -129,6 +123,7 @@ import com.android.systemui.quicksettings.WifiAPTile;
 import com.android.systemui.quicksettings.RebootTile;
 import com.android.systemui.quicksettings.FastChargeTile;
 import com.android.systemui.quicksettings.OnTheGoTile;
+
 
 
 import java.util.ArrayList;
@@ -191,7 +186,6 @@ public class QuickSettingsController {
         boolean mobileDataSupported = DeviceUtils.deviceSupportsMobileData(mContext);
         boolean lteSupported = DeviceUtils.deviceSupportsLte(mContext);
         boolean torchSupported = DeviceUtils.deviceSupportsTorch(mContext);
-        boolean cameraSupported = DeviceUtils.deviceSupportsCamera();
 
         if (!bluetoothSupported) {
             TILES_DEFAULT.remove(TILE_BLUETOOTH);
@@ -243,12 +237,6 @@ public class QuickSettingsController {
                 qs = new CompassTile(mContext, this);
             } else if (tile.equals(TILE_RINGER)) {
                 qs = new RingerModeTile(mContext, this);
-            } else if (tile.equals(TILE_FCHARGE)) {
-                qs = new FChargeTile(mContext, this, mHandler);
-            } else if (tile.equals(TILE_SCREENSHOT)) {
-                qs = new ScreenshotTile(mContext, this, mHandler);
-            } else if (tile.equals(TILE_CAMERA) && cameraSupported) {
-                qs = new CameraTile(mContext, this, mHandler);
             } else if (tile.equals(TILE_SYNC)) {
                 qs = new SyncTile(mContext, this);
             } else if (tile.equals(TILE_WIFIAP) && mobileDataSupported) {
@@ -282,8 +270,6 @@ public class QuickSettingsController {
                 qs = new ExpandedDesktopTile(mContext, this);
             } else if (tile.equals(TILE_MUSIC)) {
                 qs = new MusicTile(mContext, this);
-            } else if (tile.equals(TILE_PAPIE)) {
-                qs = new PaPieTile(mContext, this);
             } else if (tile.equals(TILE_REBOOT)) {
                 qs = new RebootTile(mContext, this);
             } else if (tile.equals(TILE_QUICKRECORD)) {

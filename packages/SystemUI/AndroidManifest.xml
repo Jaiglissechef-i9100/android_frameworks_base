@@ -45,7 +45,6 @@
     <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS" />
     <uses-permission android:name="android.permission.MASTER_CLEAR" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.CAMERA" />
 
     <!-- ActivityManager -->
     <uses-permission android:name="android.permission.GET_TASKS" />
@@ -76,7 +75,7 @@
     <!-- Keyguard -->
     <uses-permission android:name="android.permission.CONTROL_KEYGUARD" />
  
-    <!-- Halo -->
+    <!--Halo-->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <!-- Wifi Display -->
@@ -90,24 +89,12 @@
     <!-- Reboot -->
     <uses-permission android:name="android.permission.REBOOT" />
 
-    <!-- Kill app permission -->
-    <uses-permission android:name="android.permission.FORCE_STOP_PACKAGES" />
-
     <!-- Development shortcut -->
     <uses-permission android:name="android.permission.CLEAR_APP_USER_DATA" />
     <uses-permission android:name="android.permission.FORCE_STOP_PACKAGES" />
 
     <!-- Record Audio QuickRecord -->
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
-
-    <!-- Secure Screenshot -->
-    <protected-broadcast android:name="android.permission.SCREENSHOT" />
-    <protected-broadcast android:name="android.intent.action.SCREENSHOT" />
-
-    <permission android:name="android.permission.SCREENSHOT"
-                android:protectionLevel="signatureOrSystem"
-                android:description="@string/permdesc_screenshot"
-                android:label="@string/permlab_screenshot" />
 
     <!-- Active display -->
     <uses-permission android:name="android.permission.SYSTEM_NOTIFICATION_LISTENER" />
@@ -133,14 +120,11 @@
             android:exported="true"
             />
 
+        <!-- started from PhoneWindowManager
+             TODO: Should have an android:permission attribute -->
         <service android:name=".screenshot.TakeScreenshotService"
             android:process=":screenshot"
-            android:permission="android.permission.SCREENSHOT"
-            android:exported="false">
-            <intent-filter>
-               <android name="android.intent.action.SCREENSHOT"/>
-            </intent-filter>
-        </service>
+            android:exported="false" />
 
         <service android:name=".LoadAverageService"
                 android:exported="true" />
@@ -361,19 +345,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.android.systemui.shortcuts.PowerMenu"
-            android:label="@string/shortcut_power_menu"
-            android:icon="@drawable/ic_sysbar_power_menu"
-            android:theme="@android:style/Theme.NoDisplay"
-            android:excludeFromRecents="true"
-            android:launchMode="singleInstance" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="com.android.systemui.SHORTCUT" />
-                <category android:name="com.android.systemui.SHORTCUT_EXTRA" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name="com.android.systemui.shortcuts.QuietHours"
             android:label="@string/shortcut_quiethours"
             android:icon="@drawable/ic_qs_quiet_hours_on"
@@ -442,19 +413,6 @@
             android:name="com.android.systemui.shortcuts.Screenshot"
             android:label="@string/shortcut_screenshot"
             android:icon="@drawable/ic_sysbar_screenshot"
-            android:theme="@android:style/Theme.NoDisplay"
-            android:excludeFromRecents="true"
-            android:launchMode="singleInstance" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="com.android.systemui.SHORTCUT" />
-                <category android:name="com.android.systemui.SHORTCUT_EXTRA" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="com.android.systemui.shortcuts.SleepScreen"
-            android:label="@string/shortcut_screensleep"
-            android:icon="@drawable/ic_qs_sleep"
             android:theme="@android:style/Theme.NoDisplay"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance" >

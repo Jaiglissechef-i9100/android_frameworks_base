@@ -24,7 +24,6 @@ public class QSConstants {
         public static final String TILE_SETTINGS = "toggleSettings";
         public static final String TILE_WIFI = "toggleWifi";
         public static final String TILE_LOCATION = "toggleLocation";
-        public static final String TILE_FCHARGE = "toggleFCharge";
         public static final String TILE_BLUETOOTH = "toggleBluetooth";
         public static final String TILE_BRIGHTNESS = "toggleBrightness";
         public static final String TILE_RINGER = "toggleSound";
@@ -40,7 +39,6 @@ public class QSConstants {
         public static final String TILE_SLEEP = "toggleSleepMode";
         public static final String TILE_LTE = "toggleLte";
         public static final String TILE_NFC = "toggleNfc";
-        public static final String TILE_PAPIE = "togglePaPie";
         public static final String TILE_QUICKRECORD = "toggleQuickRecord";
         public static final String TILE_QUIETHOURS = "toggleQuietHours";
         public static final String TILE_VOLUME = "toggleVolume";
@@ -51,7 +49,6 @@ public class QSConstants {
         public static final String TILE_REBOOT = "toggleReboot";
         public static final String TILE_CUSTOM = "toggleCustom";
         public static final String TILE_SCREENSHOT = "toggleScreenshot";
-        public static final String TILE_CAMERA = "toggleCamera";
         public static final String TILE_CONTACT = "tileContact";
         public static final String TILE_ONTHEGO = "toggleOnTheGo";
         public static final String TILE_SHAKE = "toggleShake";

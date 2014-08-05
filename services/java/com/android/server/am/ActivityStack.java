@@ -48,9 +48,9 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.ActivityOptions;
 import android.app.AppGlobals;
-import android.app.AppOpsManager;
 import android.app.IActivityController;
 import android.app.IThumbnailReceiver;
+import android.app.AppOpsManager;
 import android.app.ResultInfo;
 import android.app.ActivityManager.RunningTaskInfo;
 import android.content.ComponentName;
@@ -1765,27 +1765,23 @@ final class ActivityStack {
     }
 
     private final void updatePrivacyGuardNotificationLocked(ActivityRecord next) {
-        if (android.provider.Settings.Secure.getIntForUser(mContext.getContentResolver(),
-            android.provider.Settings.Secure.PRIVACY_GUARD_NOTIFICATION,
-            1, UserHandle.USER_CURRENT) == 0) {
-            return;
-        }
+
         String privacyGuardPackageName = mStackSupervisor.mPrivacyGuardPackageName;
         if (privacyGuardPackageName != null && privacyGuardPackageName.equals(next.packageName)) {
             return;
         }
 
-        int privacy = mService.mAppOpsService.getPrivacyGuardSettingForPackage(
+        boolean privacy = mService.mAppOpsService.getPrivacyGuardSettingForPackage(
                 next.app.uid, next.packageName);
 
-        if (privacyGuardPackageName != null && privacy == AppOpsManager.PRIVACY_GUARD_DISABLED) {
+        if (privacyGuardPackageName != null && !privacy) {
             Message msg = mService.mHandler.obtainMessage(
                     ActivityManagerService.CANCEL_PRIVACY_NOTIFICATION_MSG, next.userId);
             msg.sendToTarget();
             mStackSupervisor.mPrivacyGuardPackageName = null;
-        } else if (privacy > AppOpsManager.PRIVACY_GUARD_DISABLED) {
+        } else if (privacy) {
             Message msg = mService.mHandler.obtainMessage(
-                    ActivityManagerService.POST_PRIVACY_NOTIFICATION_MSG, privacy, 0, next);
+                    ActivityManagerService.POST_PRIVACY_NOTIFICATION_MSG, next);
             msg.sendToTarget();
             mStackSupervisor.mPrivacyGuardPackageName = next.packageName;
         }

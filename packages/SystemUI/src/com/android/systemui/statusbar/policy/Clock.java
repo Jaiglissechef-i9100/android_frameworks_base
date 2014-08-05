@@ -123,10 +123,7 @@ public class Clock extends TextView implements DemoMode {
                     .getUriFor(Settings.System.STATUSBAR_CLOCK_DATE_STYLE),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System
-                    .getUriFor(Settings.System.STATUSBAR_CLOCK_DATE_FORMAT),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.SYSTEM_ICON_COLOR), false,
+                    .getUriFor(Settings.System.STATUSBAR_CLOCK_DATE_FORMAT), false,
                     this, UserHandle.USER_ALL);
             updateSettings();
         }
@@ -390,16 +387,8 @@ public class Clock extends TextView implements DemoMode {
         }
 
         if (mAttached) {
-<<<<<<< HEAD
-            setTextColor(clockColor);
-=======
-            if (mCustomColor) {
-                setTextColor(systemColor);
-            } else {
-                setTextColor(clockColor);
-            }
             getFontStyle(mClockFontStyle);
->>>>>>> 143fb92... Statusbar clock font style (1/2)
+            setTextColor(clockColor);
             updateClockVisibility();
             updateClock();
         }

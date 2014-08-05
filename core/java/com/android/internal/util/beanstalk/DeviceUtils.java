@@ -73,10 +73,6 @@ public class DeviceUtils {
                     || tm.getLteOnGsmMode() != 0;
     }
 
-    public static boolean deviceSupportsCamera() {
-        return Camera.getNumberOfCameras() > 0;
-    }
-
     public static boolean deviceSupportsGps(Context context) {
         return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS);
     }

@@ -38,6 +38,7 @@ import android.os.ResultReceiver;
 import android.os.ServiceManager;
 import android.os.SystemClock;
 import android.provider.Settings;
+import android.service.gesture.IEdgeGestureService;
 import android.text.InputType;
 import android.text.Layout;
 import android.text.Spannable;
@@ -975,13 +976,12 @@ public class InputMethodService extends AbstractInputMethodService {
         boolean fullScreenOverride = Settings.System.getIntForUser(getContentResolver(),
                 Settings.System.DISABLE_FULLSCREEN_KEYBOARD, 0,
                 UserHandle.USER_CURRENT_OR_SELF) != 0;
-        boolean isFullscreen;
         int mHaloEnabled = (Settings.System.getInt(getContentResolver(), Settings.System.HALO_ENABLED, 0));
-
+        boolean isFullscreen;
         if (fullScreenOverride) {
             isFullscreen = false;
         } else {
-	    isFullscreen = (mHaloEnabled != 1) ? (onEvaluateFullscreenMode() || onEvaluateSplitView()) : mShowInputRequested && onEvaluateFullscreenMode();
+            isFullscreen = (mHaloEnabled != 1) ? (onEvaluateFullscreenMode() || onEvaluateSplitView()) : mShowInputRequested && onEvaluateFullscreenMode();
         }
         boolean changed = mLastShowInputRequested != mShowInputRequested;
         if (mIsFullscreen != isFullscreen || !mFullscreenApplied) {
@@ -1530,6 +1530,17 @@ public class InputMethodService extends AbstractInputMethodService {
             mWindowWasVisible = mWindowVisible;
             mInShowWindow = true;
             showWindowInner(showInput);
+            if (showInput) {
+                // IME softkeyboard is showing. Notify EdgeGestureService.
+                IEdgeGestureService edgeGestureService = getEdgeGestureService();
+                try {
+                    if (edgeGestureService != null) {
+                        edgeGestureService.setImeIsActive(true);
+                    }
+                } catch (RemoteException e) {
+                    mEdgeGestureService = null;
+                }
+            }
         } finally {
             mWindowWasVisible = true;
             mInShowWindow = false;
@@ -1637,6 +1648,16 @@ public class InputMethodService extends AbstractInputMethodService {
             mWindowVisible = false;
             onWindowHidden();
             mWindowWasVisible = false;
+        }
+
+        // IME softkeyboard is hiding. Notify EdgeGestureService.
+        IEdgeGestureService edgeGestureService = getEdgeGestureService();
+        try {
+            if (edgeGestureService != null) {
+                edgeGestureService.setImeIsActive(false);
+            }
+        } catch (RemoteException e) {
+            mEdgeGestureService = null;
         }
 
         int mKeyboardRotationTimeout = Settings.System.getIntForUser(getContentResolver(),
@@ -2404,6 +2425,19 @@ public class InputMethodService extends AbstractInputMethodService {
                         ServiceManager.getService("statusbar"));
             }
             return mStatusBarService;
+        }
+    }
+
+    /**
+     * If not set till now get EdgeGestureService.
+     */
+    private IEdgeGestureService getEdgeGestureService() {
+        synchronized (mServiceAquireLock) {
+            if (mEdgeGestureService == null) {
+                mEdgeGestureService = IEdgeGestureService.Stub.asInterface(
+                            ServiceManager.getService("edgegestureservice"));
+            }
+            return mEdgeGestureService;
         }
     }
 

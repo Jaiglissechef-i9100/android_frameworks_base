@@ -118,11 +118,13 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
     private boolean mFitThumbnailToXY;
     private int mRecentItemLayoutId;
     private boolean mHighEndGfx;
-    private int mDragPositionX;
-    private int mDragPositionY;
 
     private ImageView mClearAllRecents;
     private CircleMemoryMeter mRecentsMemoryIndicator;
+
+    private int mDragPositionX;
+    private int mDragPositionY;
+    private ImageView mClearRecents;
 
     private INotificationManager mNotificationManager;
 
@@ -924,9 +926,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
                         holder.thumbnailViewImage, bm, 0, 0, null).toBundle();
 
         show(false);
-        Intent intent = ad.intent;
-        boolean floating = (intent.getFlags() & Intent.FLAG_FLOATING_WINDOW) == Intent.FLAG_FLOATING_WINDOW;
-        if (ad.taskId >= 0 && !floating) {
+        if (ad.taskId >= 0) {
             // This is an active task; it should just go to the foreground.
 
 	    int mHaloEnabled = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.HALO_ENABLED, 0));
@@ -946,27 +946,18 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
                     opts);
 	    
         } else {
-            if (floating) {
-                if (DEBUG) Log.v(TAG, "Starting floating activity " + intent);
-                try {
-                    context.startActivityAsUser(intent, opts,
+            Intent intent = ad.intent;
+            intent.addFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY
+                    | Intent.FLAG_ACTIVITY_TASK_ON_HOME
+                    | Intent.FLAG_ACTIVITY_NEW_TASK);
+            if (DEBUG) Log.v(TAG, "Starting activity " + intent);
+            try {
+                context.startActivityAsUser(intent, opts,
                         new UserHandle(UserHandle.USER_CURRENT));
-                } catch (SecurityException e) {
-                    Log.e(TAG, "Recents does not have the permission to launch " + intent, e);
-                }
-            } else {
-                intent.addFlags(Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY
-                        | Intent.FLAG_ACTIVITY_TASK_ON_HOME
-                        | Intent.FLAG_ACTIVITY_NEW_TASK);
-                if (DEBUG) Log.v(TAG, "Starting activity " + intent);
-                try {
-                    context.startActivityAsUser(intent, opts,
-                            new UserHandle(UserHandle.USER_CURRENT));
-                } catch (SecurityException e) {
-                    Log.e(TAG, "Recents does not have the permission to launch " + intent, e);
-                } catch (ActivityNotFoundException e) {
-                    Log.e(TAG, "Error launching activity " + intent, e);
-                }
+            } catch (SecurityException e) {
+                Log.e(TAG, "Recents does not have the permission to launch " + intent, e);
+            } catch (ActivityNotFoundException e) {
+                Log.e(TAG, "Error launching activity " + intent, e);
             }
         }
         if (usingDrawingCache) {
@@ -1189,8 +1180,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
             new PopupMenu(mContext, anchorView == null ? selectedView : anchorView);
         mPopup = popup;
 
-	int mHaloEnabled = (Settings.System.getInt(mContext.getContentResolver(), 
-                                Settings.System.HALO_ENABLED, 0));
+	int mHaloEnabled = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.HALO_ENABLED, 0));
 
 	if(mHaloEnabled != 1){
         	popup.getMenuInflater().inflate(R.menu.recent_popup_menu_split, popup.getMenu());
@@ -1229,8 +1219,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
         popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
             public boolean onMenuItemClick(MenuItem item) {
 
-		int mHaloEnabled = (Settings.System.getInt(mContext.getContentResolver(), 
-                                Settings.System.HALO_ENABLED, 0));
+		int mHaloEnabled = (Settings.System.getInt(mContext.getContentResolver(), Settings.System.HALO_ENABLED, 0));
 
                 if (item.getItemId() == R.id.recent_remove_item) {
                     ((ViewGroup) mRecentsContainer).removeViewInLayout(selectedView);
@@ -1266,6 +1255,7 @@ public class RecentsPanelView extends FrameLayout implements OnItemClickListener
                     } else {
                         throw new IllegalStateException("Oops, no tag on view " + selectedView);
                     }
+
                 } else if (item.getItemId() == R.id.recent_launch_floating) {
                     launchFloating(selectedView);
                 } else if (item.getItemId() == R.id.recent_add_split_view && mHaloEnabled != 1) {

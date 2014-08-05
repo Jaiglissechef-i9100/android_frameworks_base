@@ -394,6 +394,7 @@ public class KeyguardSelectorView extends LinearLayout implements KeyguardSecuri
         mSearchDisabled = disabledBySimState || !searchActionAvailable || !searchTargetPresent
                 || !currentUserSetup;
         updateResources();
+        updateLockscreenBattery(null);
     }
 
     public void updateResources() {
@@ -549,7 +550,6 @@ public class KeyguardSelectorView extends LinearLayout implements KeyguardSecuri
             mGlowPadView.setTargetDescriptions(description);
             mGlowPadView.setDirectionDescriptions(directionDescription);
         }
-        updateLockscreenBattery(null);
     }
 
     void doTransition(View view, float to) {

@@ -29,7 +29,7 @@
 
     <com.android.keyguard.NotificationHostView
         android:layout_width="match_parent"
-	android:layout_height="match_parent"
+        android:layout_height="match_parent"
         android:id="@+id/notification_host_view" >
 
         <view class="com.android.keyguard.NotificationHostView$TouchModalScrollView"

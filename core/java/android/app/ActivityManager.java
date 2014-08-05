@@ -1,4 +1,3 @@
-
 /*
  * Copyright (C) 2007 The Android Open Source Project
  * This code has been modified.  Portions copyright (C) 2010, T-Mobile USA, Inc.
@@ -466,10 +465,16 @@ public class ActivityManager {
      * @hide
      */
     static public boolean isHighEndGfx() {
-        if (GfxAccelCheck) {
-        return false;
-        }
-        return true;
+        return (!isLowRamDeviceStatic() &&
+            !Resources.getSystem().getBoolean(com.android.internal.R.bool.config_avoidGfxAccel))
+            || isForcedHighEndGfx();
+    }
+
+    /**
+     * @hide
+     */
+    public static boolean isForcedHighEndGfx() {
+        return SystemProperties.getBoolean("persist.sys.force_highendgfx", false);
     }
 
     /**

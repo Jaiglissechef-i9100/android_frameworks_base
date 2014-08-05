@@ -37,7 +37,6 @@ import com.android.internal.app.IMediaContainerService;
 import com.android.internal.app.ResolverActivity;
 import com.android.internal.content.NativeLibraryHelper;
 import com.android.internal.content.PackageHelper;
-import com.android.internal.policy.impl.PhoneWindowManager;
 import com.android.internal.util.FastPrintWriter;
 import com.android.internal.util.FastXmlSerializer;
 import com.android.internal.util.XmlUtils;
@@ -134,7 +133,6 @@ import android.util.SparseArray;
 import android.util.Xml;
 import android.view.Display;
 import android.view.WindowManager;
-import android.view.WindowManagerPolicy;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -457,9 +455,8 @@ public class PackageManagerService extends IPackageManager.Stub {
     PackageParser.Package mPlatformPackage;
     ComponentName mCustomResolverComponentName;
 
-    private AppOpsManager mAppOps;
-
     boolean mResolverReplaced = false;
+    private AppOpsManager mAppOps;
 
     IAssetRedirectionManager mAssetRedirectionManager;
 
@@ -559,9 +556,6 @@ public class PackageManagerService extends IPackageManager.Stub {
 
     // Stores a list of users whose package restrictions file needs to be updated
     private HashSet<Integer> mDirtyUsers = new HashSet<Integer>();
-
-    WindowManager mWindowManager;
-    private final WindowManagerPolicy mPolicy; // to set packageName
 
     final private DefaultContainerConnection mDefContainerConn =
             new DefaultContainerConnection();
@@ -911,14 +905,14 @@ public class PackageManagerService extends IPackageManager.Stub {
                             }
 
                             if (!update && !isSystemApp(res.pkg.applicationInfo)) {
-                                boolean privacyGuard = android.provider.Settings.Secure.getIntForUser(
+                                boolean privacyGuard = Secure.getIntForUser(
                                         mContext.getContentResolver(),
                                         android.provider.Settings.Secure.PRIVACY_GUARD_DEFAULT,
                                         0, UserHandle.USER_CURRENT) == 1;
                                 if (privacyGuard) {
                                     mAppOps.setPrivacyGuardSettingForPackage(
                                             res.pkg.applicationInfo.uid,
-                                            res.pkg.applicationInfo.packageName, true, false);
+                                            res.pkg.applicationInfo.packageName, true);
                                 }
                             }
 
@@ -1165,9 +1159,8 @@ public class PackageManagerService extends IPackageManager.Stub {
 
         mInstaller = installer;
 
-        mWindowManager = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
-        Display d = mWindowManager.getDefaultDisplay();
-        mPolicy = new PhoneWindowManager();
+        WindowManager wm = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+        Display d = wm.getDefaultDisplay();
         d.getMetrics(mMetrics);
 
         File frameworkDir;
@@ -3990,7 +3983,6 @@ public class PackageManagerService extends IPackageManager.Stub {
             final int pkgsSize = pkgs.size();
             ExecutorService executorService = Executors.newFixedThreadPool(sNThreads);
             for (PackageParser.Package pkg : pkgs) {
-                if (!isFirstBoot()) {
                 final PackageParser.Package p = pkg;
                 synchronized (mInstallLock) {
                     Runnable task = new Runnable() {

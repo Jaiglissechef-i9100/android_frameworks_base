@@ -511,12 +511,6 @@
     <!-- Class name for default keyguard appwidget [DO NOT TRANSLATE] -->
     <string name="widget_default_class_name"></string>
 
-    <!-- Package name for keyguard to use -->
-    <string name="config_keyguardPackage">com.android.keyguard</string>
-
-    <!-- Class name for keyguard service to use -->
-    <string name="config_keyguardService">com.android.keyguard.KeyguardService</string>
-
     <!-- Indicate whether the SD card is accessible without removing the battery. -->
     <bool name="config_batterySdCardAccessibility">false</bool>
 
@@ -849,9 +843,7 @@
          -->
     <string-array name="config_locationProviderPackageNames" translatable="false">
         <!-- The standard AOSP fused location provider -->
-       <item>com.android.location.fused</item>
-       <item>com.google.android.location</item>
-       <item>com.google.android.gms</item>
+        <item>com.android.location.fused</item>
     </string-array>
 
     <!-- Component name of the geofence services provider. -->
@@ -1411,7 +1403,7 @@
 
     <!-- Timeout in MS for how long you have to long-press the back key to
          kill the foreground app. -->
-    <integer name="config_backKillTimeout">750</integer>
+    <integer name="config_backKillTimeout">2000</integer>
 
     <!-- Device has a h/w rotation lock switch -->
     <bool name="config_hasRotationLockSwitch">false</bool>
@@ -1503,9 +1495,6 @@
    <!-- set to false if we dont need to consider data
          service state to display signal strength bars -->
     <bool name="config_combined_signal">true</bool>
-
-    <!-- Boolean to enable adb by default on a per-device basis -->
-    <bool name="config_enableAdbByDefault">false</bool>
 
     <!-- bool value to for enabling motion accelerometer -->
     <bool name="use_motion_accel">false</bool>

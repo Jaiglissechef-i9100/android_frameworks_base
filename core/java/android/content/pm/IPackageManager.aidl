@@ -17,7 +17,6 @@
 
 package android.content.pm;
 
-import android.app.ComposedIconInfo;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -430,8 +429,4 @@ interface IPackageManager {
     /** Protected Apps */
     void setComponentProtectedSetting(in ComponentName componentName, in boolean newState,
             int userId);
-
-    /** Themes */
-    void updateIconMapping(String pkgName);
-    ComposedIconInfo getComposedIconInfo();
 }

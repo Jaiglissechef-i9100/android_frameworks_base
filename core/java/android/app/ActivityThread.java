@@ -47,7 +47,6 @@ import android.database.sqlite.SQLiteDebug;
 import android.database.sqlite.SQLiteDebug.DbStats;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
-import android.graphics.Typeface;
 import android.hardware.display.DisplayManagerGlobal;
 import android.net.IConnectivityManager;
 import android.net.Proxy;
@@ -164,7 +163,7 @@ public final class ActivityThread {
     private static final int LOG_ON_PAUSE_CALLED = 30021;
     private static final int LOG_ON_RESUME_CALLED = 30022;
 
-    static ContextImpl mSystemContext = null;
+    private ContextImpl mSystemContext;
 
     static IPackageManager sPackageManager;
 
@@ -1542,9 +1541,9 @@ public final class ActivityThread {
      */
     Resources getTopLevelResources(String resDir,
             int displayId, Configuration overrideConfiguration,
-            LoadedApk pkgInfo, Context context, String pkgName) {
-        return mResourcesManager.getTopLevelResources(resDir, overlayDirs, displayId, pkgName,
-                overrideConfiguration, pkgInfo.getCompatibilityInfo(), null, context);
+            LoadedApk pkgInfo) {
+        return mResourcesManager.getTopLevelResources(resDir, displayId, overrideConfiguration,
+                pkgInfo.getCompatibilityInfo(), null);
     }
 
     final Handler getHandler() {
@@ -2134,16 +2133,6 @@ public final class ActivityThread {
             }
         } catch (Exception e) {
             if (!mInstrumentation.onException(activity, e)) {
-                if (e instanceof InflateException) {
-                Log.e(TAG, "Failed to inflate", e);
-                String pkg = null;
-                if (r.packageInfo != null && !TextUtils.isEmpty(r.packageInfo.getPackageName())) {
-                    pkg = r.packageInfo.getPackageName();
-                }
-                Intent intent = new Intent(Intent.ACTION_APP_LAUNCH_FAILURE,
-                    (pkg != null)? Uri.fromParts("package", pkg, null) : null);
-                getSystemContext().sendBroadcast(intent);
-                }
                 throw new RuntimeException(
                     "Unable to instantiate activity " + component
                     + ": " + e.toString(), e);
@@ -3981,10 +3970,8 @@ public final class ActivityThread {
         if (configDiff != 0) {
             // Ask text layout engine to free its caches if there is a locale change
             boolean hasLocaleConfigChange = ((configDiff & ActivityInfo.CONFIG_LOCALE) != 0);
-            boolean hasThemeConfigChange = ((configDiff & ActivityInfo.CONFIG_THEME_RESOURCE) != 0);
-            if (hasLocaleConfigChange || hasThemeConfigChange) {
+            if (hasLocaleConfigChange) {
                 Canvas.freeTextLayoutCaches();
-                Typeface.recreateDefaults();
                 if (DEBUG_CONFIGURATION) Slog.v(TAG, "Cleared TextLayout Caches");
             }
         }

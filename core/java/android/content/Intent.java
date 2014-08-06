@@ -696,14 +696,6 @@ public class Intent implements Parcelable, Cloneable {
     public static final String ACTION_CREATE_SHORTCUT = "android.intent.action.CREATE_SHORTCUT";
 
     /**
-     * PhoneWindowManager: Take Screenshot via takeScreenshot()
-     *  <p>Input: nothing
-     *  <p>Output: nothing
-     *  @hide
-     */
-    public static final String ACTION_SCREENSHOT = "android.intent.action.SCREENSHOT";
-
-    /**
      * The name of the extra used to define the Intent of a shortcut.
      *
      * @see #ACTION_CREATE_SHORTCUT
@@ -1806,14 +1798,6 @@ public class Intent implements Parcelable, Cloneable {
         "android.intent.action.EXTERNAL_APPLICATIONS_UNAVAILABLE";
 
     /**
-     * Broadcast Action: The current keyguard wallpaper configuration
-     * has changed and should be re-read.
-     * {@hide}
-     */
-    public static final String ACTION_KEYGUARD_WALLPAPER_CHANGED =
-        "android.intent.action.KEYGUARD_WALLPAPER_CHANGED";
-
-    /**
      * Broadcast Action:  The current system wallpaper has changed.  See
      * {@link android.app.WallpaperManager} for retrieving the new wallpaper.
      * This should <em>only</em> be used to determine when the wallpaper
@@ -2676,14 +2660,6 @@ public class Intent implements Parcelable, Cloneable {
      * @hide
      */
     public static final String ACTION_GLOBAL_BUTTON = "android.intent.action.GLOBAL_BUTTON";
-
-    /**
-     * Broadcast Action: let apps know when a package is going to be removed. This is useful
-     * for switching to default theme if the package being removed is the current applied theme.
-     * @hide
-     */
-    public static final String ACTION_PACKAGE_BEING_REMOVED =
-            "android.intent.action.PACKAGE_BEING_REMOVED";
 
     /**
      * Activity Action: Allow the user to select and return one or more existing

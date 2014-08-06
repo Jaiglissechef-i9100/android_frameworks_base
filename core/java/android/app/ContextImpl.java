@@ -35,8 +35,6 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.ReceiverCallNotAllowedException;
-import android.content.res.IThemeService;
-import android.content.res.ThemeManager;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.content.pm.ApplicationInfo;
@@ -604,19 +602,11 @@ class ContextImpl extends Context {
                 return new ConsumerIrManager(ctx);
             }});
 
-        registerService(THEME_SERVICE, new ServiceFetcher() {
-            public Object createService(ContextImpl ctx) {
-                IBinder b = ServiceManager.getService(THEME_SERVICE);
-                IThemeService service = IThemeService.Stub.asInterface(b);
-                return new ThemeManager(ctx.getOuterContext(),
-                        service);
-            }});
-
         registerService(PROFILE_SERVICE, new ServiceFetcher() {
-            public Object createService(ContextImpl ctx) {
-                final Context outerContext = ctx.getOuterContext();
-                return new ProfileManager (outerContext, ctx.mMainThread.getHandler());
-            }});
+                public Object createService(ContextImpl ctx) {
+                    final Context outerContext = ctx.getOuterContext();
+                    return new ProfileManager (outerContext, ctx.mMainThread.getHandler());
+                }});
 
         registerService(WimaxManagerConstants.WIMAX_SERVICE, new ServiceFetcher() {
                 public Object createService(ContextImpl ctx) {
@@ -1936,19 +1926,19 @@ class ContextImpl extends Context {
     }
 
     @Override
-    public Context createPackageContextAsUser(String packageName, String themePackageName,
-            int flags, UserHandle user) throws NameNotFoundException {
+    public Context createPackageContextAsUser(String packageName, int flags, UserHandle user)
+            throws NameNotFoundException {
         final boolean restricted = (flags & CONTEXT_RESTRICTED) == CONTEXT_RESTRICTED;
         if (packageName.equals("system") || packageName.equals("android")) {
             return new ContextImpl(this, mMainThread, mPackageInfo, mActivityToken,
-                    user, restricted, mDisplay, mOverrideConfiguration, themePackageName);
+                    user, restricted, mDisplay, mOverrideConfiguration);
         }
 
         LoadedApk pi = mMainThread.getPackageInfo(packageName, mResources.getCompatibilityInfo(),
                 flags, user.getIdentifier());
         if (pi != null) {
             ContextImpl c = new ContextImpl(this, mMainThread, pi, mActivityToken,
-                    user, restricted, mDisplay, mOverrideConfiguration, themePackageName);
+                    user, restricted, mDisplay, mOverrideConfiguration);
             if (c.mResources != null) {
                 return c;
             }
@@ -2073,16 +2063,14 @@ class ContextImpl extends Context {
 
         Resources resources = packageInfo.getResources(mainThread);
         if (resources != null) {
-            if (activityToken != null || themePackageName != null
+            if (activityToken != null
                     || displayId != Display.DEFAULT_DISPLAY
                     || overrideConfiguration != null
                     || (compatInfo != null && compatInfo.applicationScale
                             != resources.getCompatibilityInfo().applicationScale)) {
-                resources = themePackageName == null ? mResourcesManager.getTopLevelResources(
-                        packageInfo.getResDir(), packageInfo.getOverlayDirs(), displayId,
-                        packageInfo.getAppDir(), overrideConfiguration, compatInfo, activityToken, mOuterContext) :
-                mResourcesManager.getTopLevelThemedResources(packageInfo.getResDir(), displayId,
-                        packageInfo.getPackageName(), themePackageName, compatInfo ,activityToken);
+                resources = mResourcesManager.getTopLevelResources(
+                        packageInfo.getResDir(), displayId,
+                        overrideConfiguration, compatInfo, activityToken);
             }
         }
         mResources = resources;

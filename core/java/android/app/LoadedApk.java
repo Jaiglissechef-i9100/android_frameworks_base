@@ -76,7 +76,6 @@ public final class LoadedApk {
     final String mPackageName;
     private final String mAppDir;
     private final String mResDir;
-    private final String[] mOverlayDirs;
     private final String[] mSharedLibraries;
     private final String mDataDir;
     private final String mLibDir;
@@ -120,7 +119,6 @@ public final class LoadedApk {
         final int myUid = Process.myUid();
         mResDir = aInfo.uid == myUid ? aInfo.sourceDir
                 : aInfo.publicSourceDir;
-        mOverlayDirs = aInfo.resourceDirs;
         if (!UserHandle.isSameUser(aInfo.uid, myUid) && !Process.isIsolated()) {
             aInfo.dataDir = PackageManager.getDataDirForUser(UserHandle.getUserId(myUid),
                     mPackageName);
@@ -146,7 +144,6 @@ public final class LoadedApk {
         mPackageName = "android";
         mAppDir = null;
         mResDir = null;
-        mOverlayDirs = null;
         mSharedLibraries = null;
         mDataDir = null;
         mDataDirFile = null;
@@ -466,10 +463,6 @@ public final class LoadedApk {
         return mResDir;
     }
 
-    public String[] getOverlayDirs() {
-        return mOverlayDirs;
-    }
-
     public String getDataDir() {
         return mDataDir;
     }
@@ -484,8 +477,8 @@ public final class LoadedApk {
 
     public Resources getResources(ActivityThread mainThread) {
         if (mResources == null) {
-            mResources = mainThread.getTopLevelResources(mResDir, mOverlayDirs,
-                    Display.DEFAULT_DISPLAY, null, this, mainThread.getSystemContext(), mPackageName);
+            mResources = mainThread.getTopLevelResources(mResDir,
+                    Display.DEFAULT_DISPLAY, null, this);
         }
         return mResources;
     }

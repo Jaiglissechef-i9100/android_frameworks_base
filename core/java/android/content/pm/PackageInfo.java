@@ -17,8 +17,6 @@
 
 package android.content.pm;
 
-import java.util.ArrayList;
-
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -198,28 +196,24 @@ public class PackageInfo implements Parcelable {
      * @hide
      */
     public static final int INSTALL_LOCATION_UNSPECIFIED = -1;
-
     /**
      * Constant corresponding to <code>auto</code> in
      * the {@link android.R.attr#installLocation} attribute.
      * @hide
      */
     public static final int INSTALL_LOCATION_AUTO = 0;
-
     /**
      * Constant corresponding to <code>internalOnly</code> in
      * the {@link android.R.attr#installLocation} attribute.
      * @hide
      */
     public static final int INSTALL_LOCATION_INTERNAL_ONLY = 1;
-
     /**
      * Constant corresponding to <code>preferExternal</code> in
      * the {@link android.R.attr#installLocation} attribute.
      * @hide
      */
     public static final int INSTALL_LOCATION_PREFER_EXTERNAL = 2;
-
     /**
      * The install location requested by the activity.  From the
      * {@link android.R.attr#installLocation} attribute, one of
@@ -229,7 +223,7 @@ public class PackageInfo implements Parcelable {
      * @hide
      */
     public int installLocation = INSTALL_LOCATION_INTERNAL_ONLY;
-
+    
     // Is Theme Apk
     /**
      * {@hide}
@@ -303,6 +297,54 @@ public class PackageInfo implements Parcelable {
     public PackageInfo() {
     }
 
+    /*
+     * Is Theme Apk is DRM protected (contains DRM-protected resources)
+     *
+     */
+    private boolean drmProtectedThemeApk = false;
+
+    /**
+     * @hide
+     *
+     * @return Is Theme Apk is DRM protected (contains DRM-protected resources)
+     */
+    public boolean isDrmProtectedThemeApk() {
+        return drmProtectedThemeApk;
+    }
+
+    /**
+     * @hide
+     *
+     * @param value if Theme Apk is DRM protected (contains DRM-protected resources)
+     */
+    public void setDrmProtectedThemeApk(boolean value) {
+        drmProtectedThemeApk = value;
+    }
+
+    /*
+     * If isThemeApk and isDrmProtectedThemeApk are true - path to hidden locked zip file
+     *
+     */
+    private String lockedZipFilePath;
+
+    /**
+     * @hide
+     *
+     * @return path for hidden locked zip file
+     */
+    public String getLockedZipFilePath() {
+        return lockedZipFilePath;
+    }
+
+    /**
+     * @hide
+     *
+     * @param value path for hidden locked zip file
+     */
+    public void setLockedZipFilePath(String value) {
+        lockedZipFilePath = value;
+    }
+
     public String toString() {
         return "PackageInfo{"
             + Integer.toHexString(System.identityHashCode(this))
@@ -349,7 +391,6 @@ public class PackageInfo implements Parcelable {
         dest.writeStringList(mOverlayTargets);
         dest.writeTypedArray(themeInfos, parcelableFlags);
         dest.writeInt(hasIconPack ? 1 : 0);
-
         /* Legacy Theme-specific. */
         dest.writeInt((isLegacyThemeApk) ? 1 : 0);
         dest.writeInt((isLegacyIconPackApk) ? 1 : 0);
@@ -402,7 +443,6 @@ public class PackageInfo implements Parcelable {
         mOverlayTargets = source.createStringArrayList();
         themeInfos = source.createTypedArray(ThemeInfo.CREATOR);
         hasIconPack = source.readInt() == 1;
-
         /* Legacy Theme-specific. */
         isLegacyThemeApk = (source.readInt() != 0);
         isLegacyIconPackApk = (source.readInt() != 0);
@@ -450,7 +490,5 @@ public class PackageInfo implements Parcelable {
             }
             packageRedirections.put(pkg, redirectrionsMap);
         }
-=======
->>>>>>> 32133d4... Remove T-mobile items not used by new theme engine
     }
 }

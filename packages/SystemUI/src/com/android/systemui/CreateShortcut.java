@@ -126,12 +126,16 @@ public class CreateShortcut extends LauncherActivity {
             return R.drawable.ic_qs_torch_on;
         } else if (c.equals("LastApp")) {
             return R.drawable.ic_sysbar_lastapp;
+        } else if (c.equals("PowerMenu")) {
+            return R.drawable.ic_sysbar_power_menu;
         } else if (c.equals("Reboot")) {
             return R.drawable.ic_qs_reboot;
         } else if (c.equals("Recovery")) {
             return R.drawable.ic_qs_reboot_recovery;
         } else if (c.equals("Screenshot")) {
             return R.drawable.ic_sysbar_screenshot;
+        } else if (c.equals("SleepScreen")) {
+            return R.drawable.ic_qs_sleep;
         } else if (c.equals("VolumePanel")) {
             return R.drawable.ic_qs_volume;
         } else if (c.equals("ShakeEvents")) {

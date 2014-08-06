@@ -62,11 +62,10 @@ public class CommandQueue extends IStatusBar.Stub {
     private static final int MSG_TOGGLE_SCREENSHOT          = 20 << MSG_SHIFT;
     private static final int MSG_TOGGLE_LAST_APP            = 21 << MSG_SHIFT;
     private static final int MSG_TOGGLE_KILL_APP            = 22 << MSG_SHIFT;
-    private static final int MSG_SET_PIE_TRIGGER_MASK       = 23 << MSG_SHIFT;
-    private static final int MSG_SMART_PULLDOWN             = 24 << MSG_SHIFT;
-    private static final int MSG_HIDE_HEADS_UP              = 25 << MSG_SHIFT;
-    private static final int MSG_HIDE_HEADS_UP_CANDIDATE    = 26 << MSG_SHIFT;
-    private static final int MSG_UPDATE_HEADS_UP_POSITION   = 27 << MSG_SHIFT;
+    private static final int MSG_SMART_PULLDOWN             = 23 << MSG_SHIFT;
+    private static final int MSG_HIDE_HEADS_UP              = 24 << MSG_SHIFT;
+    private static final int MSG_HIDE_HEADS_UP_CANDIDATE    = 25 << MSG_SHIFT;
+    private static final int MSG_UPDATE_HEADS_UP_POSITION   = 26 << MSG_SHIFT;
 
     public static final int FLAG_EXCLUDE_NONE = 0;
     public static final int FLAG_EXCLUDE_SEARCH_PANEL = 1 << 0;
@@ -112,7 +111,6 @@ public class CommandQueue extends IStatusBar.Stub {
         public void hideSearchPanel();
         public void cancelPreloadRecentApps();
         public void setWindowState(int window, int state);
-        public void setPieTriggerMask(int newMask, boolean lock);
         public void setAutoRotate(boolean enabled);
         public void toggleNotificationShade();
         public void toggleQSShade();
@@ -277,14 +275,6 @@ public class CommandQueue extends IStatusBar.Stub {
         }
     }
 
-    public void setPieTriggerMask(int newMask, boolean lock) {
-        synchronized (mList) {
-            mHandler.removeMessages(MSG_SET_PIE_TRIGGER_MASK);
-            mHandler.obtainMessage(MSG_SET_PIE_TRIGGER_MASK,
-                    newMask, lock ? 1 : 0, null).sendToTarget();
-        }
-    }
-
     public void setAutoRotate(boolean enabled) {
         synchronized (mList) {
             mHandler.removeMessages(MSG_SET_AUTOROTATE_STATUS);
@@ -423,9 +413,6 @@ public class CommandQueue extends IStatusBar.Stub {
                     break;
                 case MSG_SET_WINDOW_STATE:
                     mCallbacks.setWindowState(msg.arg1, msg.arg2);
-                    break;
-                case MSG_SET_PIE_TRIGGER_MASK:
-                    mCallbacks.setPieTriggerMask(msg.arg1, msg.arg2 != 0);
                     break;
                 case MSG_SET_AUTOROTATE_STATUS:
                     mCallbacks.setAutoRotate(msg.arg1 != 0);

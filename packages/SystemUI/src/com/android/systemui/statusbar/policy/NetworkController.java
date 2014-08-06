@@ -998,7 +998,7 @@ public class NetworkController extends BroadcastReceiver implements DemoMode {
         }
     }
 
-    protected static String huntForSsid(WifiManager manager, WifiInfo info) {
+    private String huntForSsid(WifiManager manager, WifiInfo info) {
         String ssid = info.getSSID();
         if (ssid != null) {
             return ssid;

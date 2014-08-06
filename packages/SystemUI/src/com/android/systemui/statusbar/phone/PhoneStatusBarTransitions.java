@@ -33,7 +33,7 @@ public final class PhoneStatusBarTransitions extends BarTransitions {
     private final float mIconAlphaWhenOpaque;
 
     private View mLeftSide, mStatusIcons, mSignalCluster;
-    private View mBattery, mCircleBattery, mClock, mCenterClock;
+    private View mBattery, mBatteryText, mCircleBattery, mClock, mCenterClock;
     private View mNetStats;
     private Animator mCurrentAnimation;
 
@@ -49,9 +49,10 @@ public final class PhoneStatusBarTransitions extends BarTransitions {
         mStatusIcons = mView.findViewById(R.id.statusIcons);
         mSignalCluster = mView.findViewById(R.id.signal_cluster);
         mBattery = mView.findViewById(R.id.battery);
-	mCircleBattery = mView.findViewById(R.id.circle_battery);
+        mBatteryText = mView.findViewById(R.id.battery_text);
+        mCircleBattery = mView.findViewById(R.id.circle_battery);
         mCenterClock = mView.findViewById(R.id.center_clock);
-	mNetStats = mView.findViewById(R.id.network_stats);
+        mNetStats = mView.findViewById(R.id.network_stats);
         mClock = mView.findViewById(R.id.clock);
         applyModeBackground(-1, getMode(), false /*animate*/);
         applyMode(getMode(), false /*animate*/);
@@ -96,10 +97,11 @@ public final class PhoneStatusBarTransitions extends BarTransitions {
                     animateTransitionTo(mStatusIcons, newAlpha),
                     animateTransitionTo(mSignalCluster, newAlpha),
                     animateTransitionTo(mBattery, newAlphaBC),
+                    animateTransitionTo(mBatteryText, newAlphaBC),
                     animateTransitionTo(mCircleBattery, newAlphaBC),
                     animateTransitionTo(mClock, newAlphaBC),
                     animateTransitionTo(mCenterClock, newAlphaBC),
-		    animateTransitionTo(mNetStats, newAlphaBC)
+                    animateTransitionTo(mNetStats, newAlphaBC)
                     );
             if (mode == MODE_LIGHTS_OUT) {
                 anims.setDuration(LIGHTS_OUT_DURATION);
@@ -111,10 +113,11 @@ public final class PhoneStatusBarTransitions extends BarTransitions {
             mStatusIcons.setAlpha(newAlpha);
             mSignalCluster.setAlpha(newAlpha);
             mBattery.setAlpha(newAlphaBC);
-	    mCircleBattery.setAlpha(newAlphaBC);
+            mBatteryText.setAlpha(newAlphaBC);
+            mCircleBattery.setAlpha(newAlphaBC);
             mClock.setAlpha(newAlphaBC);
-	    mCenterClock.setAlpha(newAlphaBC);
-	    mNetStats.setAlpha(newAlphaBC);
+            mCenterClock.setAlpha(newAlphaBC);
+            mNetStats.setAlpha(newAlphaBC);
         }
     }
 }

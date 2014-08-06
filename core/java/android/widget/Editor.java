@@ -1012,6 +1012,7 @@ public class Editor {
             if (mBlink != null) {
                 mBlink.uncancel();
                 makeBlink();
+            }
         } else {
             if (mBlink != null) {
                 mBlink.cancel();

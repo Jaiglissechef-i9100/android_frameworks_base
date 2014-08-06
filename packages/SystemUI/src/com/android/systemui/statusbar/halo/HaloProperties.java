@@ -21,10 +21,12 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.ColorFilterMaker;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.graphics.ColorFilter;
+import android.graphics.Bitmap;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuff.Mode;
 import android.net.ConnectivityManager;
@@ -117,11 +119,12 @@ public class HaloProperties extends FrameLayout implements BatteryStateChangeCal
     private Drawable mHaloIconMessage;
     private Drawable mHaloIconPersistent;
     private Drawable mHaloIconPinned;
+    private Drawable mNotificationIcon;
 
     protected Drawable mHaloSpeechL, mHaloSpeechR, mHaloSpeechLD, mHaloSpeechRD;
 
     protected View mHaloBubble;
-    protected ImageView mHaloBg, mHaloBgCustom, mHaloIcon, mHaloOverlay;
+    protected ImageView mHaloBg, mHaloOverlay;
 
     protected View mHaloContentView, mHaloTickerContent, mHaloTickerWrapper;
     protected TextView mHaloTextView;
@@ -136,6 +139,8 @@ public class HaloProperties extends FrameLayout implements BatteryStateChangeCal
     private MessageType mHaloMessageType = MessageType.MESSAGE;
 
     private boolean mLastContentStateLeft = true;
+
+    protected boolean mEnableCustomColor = false;
 
     CustomObjectAnimator mHaloOverlayAnimator;
 
@@ -164,8 +169,6 @@ public class HaloProperties extends FrameLayout implements BatteryStateChangeCal
 
         mHaloBubble = mInflater.inflate(R.layout.halo_bubble, null);
         mHaloBg = (ImageView) mHaloBubble.findViewById(R.id.halo_bg);
-        mHaloBgCustom = (ImageView) mHaloBubble.findViewById(R.id.halo_bg_custom);
-        mHaloIcon = (ImageView) mHaloBubble.findViewById(R.id.app_icon);
         mHaloOverlay = (ImageView) mHaloBubble.findViewById(R.id.halo_overlay);
 
         mHaloContentView = mInflater.inflate(R.layout.halo_speech, null);
@@ -173,8 +176,6 @@ public class HaloProperties extends FrameLayout implements BatteryStateChangeCal
         mHaloTickerContent = mHaloContentView.findViewById(R.id.ticker);
         mHaloTextView = (TextView) mHaloContentView.findViewById(R.id.bubble);
         mHaloTextView.setAlpha(1f);
-
-        updateColorView();
 
         mHaloNumberView = mInflater.inflate(R.layout.halo_number, null);
         mHaloNumberContainer = (RelativeLayout)mHaloNumberView.findViewById(R.id.container);
@@ -199,6 +200,43 @@ public class HaloProperties extends FrameLayout implements BatteryStateChangeCal
         mCm = (ConnectivityManager) mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
     }
 
+    private ColorMatrix createColorMatrix(int color){
+        float r = Math.abs((color & 0x00ff0000) >> 16);
+        float g = Math.abs((color & 0x0000ff00) >> 8);
+        float b = Math.abs(color & 0x000000ff);
+        //This filter changes the color depending on the pixel's alpha value. Lower alpha -> darker color.
+        return new ColorMatrix(new float[]{
+                0f, 0f, 0f, 1f, r-255,
+                0f, 0f, 0f, 1f, g-255,
+                0f, 0f, 0f, 1f, b-255,
+                0f, 0f, 0f, 1f, 0f
+                });
+    }
+
+    public void setHaloCircleColor(int color){
+        mHaloBg.setColorFilter(color, PorterDuff.Mode.SRC_IN);
+    }
+
+    public void setHaloSpeechColor(int color){
+        ColorMatrixColorFilter filter = new ColorMatrixColorFilter(createColorMatrix(color));
+        mHaloSpeechL.setColorFilter(filter);
+        mHaloSpeechR.setColorFilter(filter);
+        mHaloSpeechLD.setColorFilter(filter);
+        mHaloSpeechRD.setColorFilter(filter);
+    }
+
+    public void clearColorFilters(){
+        mHaloSpeechL.clearColorFilter();
+        mHaloSpeechR.clearColorFilter();
+        mHaloSpeechLD.clearColorFilter();
+        mHaloSpeechRD.clearColorFilter();
+        mHaloBg.clearColorFilter();
+    }
+
+    public void setHaloTextColor(int color){
+        mHaloTextView.setTextColor(color);
+    }
+
     int newPaddingHShort;
     int newPaddingHWide;
     int newPaddingVTop;
@@ -208,8 +246,6 @@ public class HaloProperties extends FrameLayout implements BatteryStateChangeCal
         final int newBubbleSize = (int)(mContext.getResources().getDimensionPixelSize(R.dimen.halo_bubble_size) * fraction);
         RelativeLayout.LayoutParams layoutParams = new RelativeLayout.LayoutParams(newBubbleSize, newBubbleSize);
         mHaloBg.setLayoutParams(layoutParams);
-        mHaloBgCustom.setLayoutParams(layoutParams);
-        mHaloIcon.setLayoutParams(layoutParams);
         mHaloOverlay.setLayoutParams(layoutParams);
 
         newPaddingHShort = (int)(mContext.getResources().getDimensionPixelSize(R.dimen.halo_speech_hpadding_short) * fraction);
@@ -236,7 +272,6 @@ public class HaloProperties extends FrameLayout implements BatteryStateChangeCal
         mHaloNumberIcon.setLayoutParams(layoutParams4);
 
         updateResources(mLastContentStateLeft);
-        updateColorView();
     }
 
     public void setHaloX(int value) {
@@ -361,6 +396,27 @@ public class HaloProperties extends FrameLayout implements BatteryStateChangeCal
         setHaloOverlay(overlay, mHaloOverlay.getAlpha());
     }
 
+    public void setNotificationIcon(Drawable d){
+        mNotificationIcon = d;
+        setHaloOverlay(d, 1, d == null);
+    }
+
+    public void setHaloOverlay(Drawable d, float overlayAlpha, boolean none){
+        if (d != mHaloCurrentOverlay) {
+            mHaloOverlay.setImageDrawable(d);
+            mHaloCurrentOverlay = d;
+
+            // Fade out number batch
+            if (!none) {
+                msgNumberAlphaAnimator.animate(ObjectAnimator.ofFloat(mHaloNumberContainer, "alpha", 0f).setDuration(100),
+                        new DecelerateInterpolator(), null);
+            }
+        }
+
+        mHaloOverlay.setAlpha(overlayAlpha);
+        updateResources(mLastContentStateLeft);
+    }
+
     public void setHaloOverlay(Overlay overlay, float overlayAlpha) {
 
         Drawable d = null;
@@ -390,21 +446,15 @@ public class HaloProperties extends FrameLayout implements BatteryStateChangeCal
             case MESSAGE:
                 d = mHaloMessage;
                 break;
+            case NONE:
+               if (mNotificationIcon != null){
+                   d = mNotificationIcon;
+                   overlayAlpha = 1;
+                }
+                break;
         }
 
-        if (d != mHaloCurrentOverlay) {
-            mHaloOverlay.setImageDrawable(d);
-            mHaloCurrentOverlay = d;
-
-            // Fade out number batch
-            if (overlay != Overlay.NONE) {
-                msgNumberAlphaAnimator.animate(ObjectAnimator.ofFloat(mHaloNumberContainer, "alpha", 0f).setDuration(100),
-                        new DecelerateInterpolator(), null);
-            }
-        }
-
-        mHaloOverlay.setAlpha(overlayAlpha);
-        updateResources(mLastContentStateLeft);
+        setHaloOverlay(d, overlayAlpha, overlay == Overlay.NONE);
     }
 
     private ContentStyle mLastContentStyle = ContentStyle.CONTENT_NONE;
@@ -642,21 +692,5 @@ public class HaloProperties extends FrameLayout implements BatteryStateChangeCal
             string = string.substring(0, length - 1);
         }
         return string;
-    }
-
-    private void updateColorView() {
-        int haloColor = Settings.System.getInt(mContext.getContentResolver(),
-                Settings.System.HALO_COLOR, 0xff33b5e5);
-
-        if (haloColor != 0xff33b5e5) {
-           mHaloBgCustom.setBackgroundResource(R.drawable.halo_bg_custom);
-           mHaloBgCustom.getBackground().setColorFilter(ColorFilterMaker.
-                   changeColorAlpha(haloColor, .32f, 0f));
-           mHaloBg.setVisibility(View.GONE);
-           mHaloBgCustom.setVisibility(View.VISIBLE);
-        } else {
-           mHaloBg.setVisibility(View.VISIBLE);
-           mHaloBgCustom.setVisibility(View.GONE);
-        }
     }
 }

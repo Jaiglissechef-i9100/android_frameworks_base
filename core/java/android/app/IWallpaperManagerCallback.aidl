@@ -17,8 +17,8 @@
 package android.app;
 
 /**
- * Callback interface used by IWallpaperManager to send asynchronous 
- * notifications back to its clients.  Note that this is a
+ * Callback interface used by IWallpaperManager to send asynchronous
+ * notifications back to its clients. Note that this is a
  * one-way interface so the server does not block waiting for the client.
  *
  * @hide
@@ -28,4 +28,9 @@ oneway interface IWallpaperManagerCallback {
      * Called when the wallpaper has changed
      */
     void onWallpaperChanged();
+
+    /**
+     * Called when the keygaurd wallpaper has changed
+     */
+     void onKeyguardWallpaperChanged();
 }

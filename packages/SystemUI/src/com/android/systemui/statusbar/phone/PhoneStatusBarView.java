@@ -197,7 +197,6 @@ public class PhoneStatusBarView extends PanelBar {
         if (mScrimColor != 0 && ActivityManager.isHighEndGfx()) {
             mBar.mStatusBarWindow.setBackgroundColor(0);
         }
-        mBar.restorePieTriggerMask();
         mBar.setOverwriteImeIsActive(false);
     }
 
@@ -206,15 +205,6 @@ public class PhoneStatusBarView extends PanelBar {
         super.onPanelFullyOpened(openPanel);
         if (openPanel != mLastFullyOpenedPanel) {
             openPanel.sendAccessibilityEvent(AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED);
-        }
-
-        // Panel is open disable bottom edge and enable all other
-        // if the user activated them
-        if (mShouldFade) {
-            mBar.updatePieTriggerMask(EdgeGesturePosition.LEFT.FLAG
-                    | EdgeGesturePosition.RIGHT.FLAG
-                    | EdgeGesturePosition.TOP.FLAG, true);
-            mBar.setOverwriteImeIsActive(true);
         }
 
         mFadingPanel = openPanel;

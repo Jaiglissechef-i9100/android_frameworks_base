@@ -1,6 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Title shown in notification popup for launching notification in floating mode -->
+    <string name="status_bar_notification_floating_item_title">Floating mode</string>
+    <string name="status_bar_recent_floating_item_title">Floating mode</string>
+
+    <!-- Weather -->
+    <string name="weatherpanel_slash">/</string>
+
+    <!-- PA PIE -->
+    <string name="pie_date_format">ccc, dd MMM yyyy</string>
+    <string name="pie_hour_format_12">hh:mm</string>
+    <string name="pie_hour_format_24">HH:mm</string>
+    <string name="pie_am_pm">a</string>
+
+    <string name="quick_settings_fcharge">Fast charge</string>
+    <string name="quick_settings_screenshot_label">Screenshot</string>
+
+    <!-- Screenshot -->
+    <string name="permdesc_screenshot">Capture screenshot</string>
+    <string name="permlab_screenshot">Allows the app to cature a screenshot. This is protected by SystemUI.</string>
+    <string name="screenshot_toast">Screenshot in %1$d seconds</string>
+
+    <string name="quick_settings_camera_label">Camera</string>
+    <!-- Camera tile toasts -->
+    <string name="quick_settings_camera_error_connect">Can\'t connect to camera</string>
+
+    <!-- Battery percent format -->
+    <string name="battery_percent_format"><xliff:g id="number">%d%%</xliff:g></string>
+
+    <!-- Title shown in recents popup for adding an application to the split view -->
+    <string name="status_bar_recent_add_to_split_view">Add to Split View</string>
 
     <!-- QS Battery Tile -->
     <string name="quick_settings_battery_charging">Charging</string>
@@ -67,7 +97,9 @@
     <string name="shortcut_reboot">Reboot</string>
     <string name="shortcut_recovery">Recovery</string>
     <string name="shortcut_last_app">Last App</string>
+    <string name="shortcut_power_menu">Power Menu</string>
     <string name="shortcut_screenshot">Screenshot</string>
+    <string name="shortcut_screensleep">Go to Sleep</string>
     <string name="shortcut_volume">Volume</string>
     <string name="shortcut_toggle_title">Action to perform</string>
     <string name="shortcut_chamber">Chamber of Secrets</string>
@@ -143,7 +175,8 @@
     <string name="quick_settings_quick_record_dialog">Play Recording\nLongpress to delete</string>
     <string name="quick_settings_custom_toggle">Custom</string>
     <string name="quick_settings_contact_toggle">Contact</string>
-    <string name="quick_settings_battery_saver_label">Battery saver</string>
+    <string name="quick_settings_battery_saver_label">Battery saver on</string>
+    <string name="quick_settings_battery_saver_off_label">Battery saver off</string>
     <string name="quick_settings_network_type">Status</string>
     <string name="quick_settings_network_unknown">Unknown</string>
     <string name="quick_settings_network_disable">No internet</string>
@@ -198,18 +231,6 @@
     <!-- Label in drop down to identify brightness slider -->
     <string name="brightness_label">Brightness</string>
     <string name="powerwidget_screen_timeout_never_toast">Screen set to always on</string>
-
-    <!-- Battery status in pie controls -->
-    <string name="pie_battery_status_charging">Charging (<xliff:g id="percent">%d</xliff:g>%%)</string>
-    <string name="pie_battery_status_full">Charged</string>
-    <string name="pie_battery_status_discharging"><xliff:g id="percent">%d</xliff:g>%% remaining</string>
-
-    <!-- Phone status in pie controls -->
-    <string name="pie_phone_status_no_service">No service</string>
-    <string name="pie_phone_status_airplane_mode">Airplane mode on</string>
-    <string name="pie_phone_status_emergency_only">Emergency calls only</string>
-
-    <string name="status_bar_notification_hide_icon_packages">Hide status bar app\'s notification icon(s)</string>
 
     <!-- Smart PullDown Warning -->
     <string name="smart_pulldown_disabled">Smart pulldown is disabled</string>

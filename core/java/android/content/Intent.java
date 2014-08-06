@@ -1806,6 +1806,14 @@ public class Intent implements Parcelable, Cloneable {
         "android.intent.action.EXTERNAL_APPLICATIONS_UNAVAILABLE";
 
     /**
+     * Broadcast Action: The current keyguard wallpaper configuration
+     * has changed and should be re-read.
+     * {@hide}
+     */
+    public static final String ACTION_KEYGUARD_WALLPAPER_CHANGED =
+        "android.intent.action.KEYGUARD_WALLPAPER_CHANGED";
+
+    /**
      * Broadcast Action:  The current system wallpaper has changed.  See
      * {@link android.app.WallpaperManager} for retrieving the new wallpaper.
      * This should <em>only</em> be used to determine when the wallpaper
@@ -2668,6 +2676,14 @@ public class Intent implements Parcelable, Cloneable {
      * @hide
      */
     public static final String ACTION_GLOBAL_BUTTON = "android.intent.action.GLOBAL_BUTTON";
+
+    /**
+     * Broadcast Action: let apps know when a package is going to be removed. This is useful
+     * for switching to default theme if the package being removed is the current applied theme.
+     * @hide
+     */
+    public static final String ACTION_PACKAGE_BEING_REMOVED =
+            "android.intent.action.PACKAGE_BEING_REMOVED";
 
     /**
      * Activity Action: Allow the user to select and return one or more existing

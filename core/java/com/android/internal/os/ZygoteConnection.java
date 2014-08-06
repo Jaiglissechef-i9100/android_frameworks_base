@@ -16,6 +16,7 @@
 
 package com.android.internal.os;
 
+import android.graphics.Typeface;
 import android.net.Credentials;
 import android.net.LocalSocket;
 import android.os.Process;
@@ -221,6 +222,17 @@ class ZygoteConnection {
             }
 
             /**
+             *
+             * Needed, but present also in this commit:
+             * https://github.com/CyanogenMod/android_frameworks_base/commit/fc2fb1d5eb55b41477eabd75dbef3964be145732
+             *
+             */
+            //Replace the font cache if the theme changed
+            if (parsedArgs.refreshTheme) {
+                Typeface.recreateDefaults();
+            }
+
+            /**
              * In order to avoid leaking descriptors to the Zygote child,
              * the native code must close the two Zygote socket descriptors
              * in the child process before it switches from Zygote-root to
@@ -377,6 +389,9 @@ class ZygoteConnection {
 
         /** from --invoke-with */
         String invokeWith;
+
+        /** from --refresh_theme */
+        boolean refreshTheme;
 
         /**
          * Any args after and including the first non-option arg
@@ -537,6 +552,8 @@ class ZygoteConnection {
                     mountExternal = Zygote.MOUNT_EXTERNAL_MULTIUSER;
                 } else if (arg.equals("--mount-external-multiuser-all")) {
                     mountExternal = Zygote.MOUNT_EXTERNAL_MULTIUSER_ALL;
+                } else if (arg.equals("--refresh_theme")) {
+                    refreshTheme = true;
                 } else {
                     break;
                 }

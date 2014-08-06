@@ -123,6 +123,7 @@ import com.android.systemui.DemoMode;
 import com.android.systemui.EventLogTags;
 
 import com.android.systemui.statusbar.powerwidget.PowerWidget;
+import com.android.systemui.statusbar.policy.WeatherPanel;
 
 import com.android.systemui.R;
 import com.android.systemui.ReminderMessageView;
@@ -135,6 +136,8 @@ import com.android.systemui.statusbar.SignalClusterView;
 import com.android.systemui.statusbar.StatusBarIconView;
 import com.android.systemui.statusbar.phone.ShortcutsWidget;
 import com.android.systemui.statusbar.policy.BatteryController;
+import com.android.systemui.statusbar.policy.BatteryController.BatteryStateChangeCallback;
+import com.android.systemui.statusbar.policy.BatteryTextMeterView;
 import com.android.systemui.statusbar.policy.BluetoothController;
 import com.android.systemui.statusbar.policy.ClockCenter;
 import com.android.systemui.statusbar.policy.DateView;
@@ -222,6 +225,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     LocationController mLocationController;
     NetworkController mNetworkController;
 
+    BatteryTextMeterView mBatteryTextView;
+
     // Shake listener for user-defined events
     private ShakeListener mShakeListener;
 
@@ -284,6 +289,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     View mDateViewExpanded;
     View mClearButton;
     ImageView mSettingsButton, mNotificationButton;
+
+    // Weatherpanel
+    boolean mWeatherPanelEnabled;
+    WeatherPanel mWeatherPanel;
 
     // carrier/wifi label
     private TextView mCarrierLabel;
@@ -420,7 +429,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
     };
 
-    // status bra brightness control
+    // status bar brightness control
     Runnable mLongPressBrightnessChange = new Runnable() {
         @Override
         public void run() {
@@ -541,6 +550,10 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.QUICK_TILES_BG_ALPHA),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUSBAR_WEATHER_STYLE), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.USE_WEATHER), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CUSTOM_HEADER), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -687,12 +700,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     mNotificationShortcutsLayout.updateShortcuts();
                 }
             } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.PIE_CONTROLS))) {
-                attachPieContainer(isPieEnabled());
-            } else if (uri.equals(Settings.System.getUriFor(
-                    Settings.System.EXPANDED_DESKTOP_STATE))) {
-                mNavigationBarOverlay.setIsExpanded(isExpanded());
-            } else if (uri.equals(Settings.System.getUriFor(
                     Settings.System.SHAKE_LISTENER_ENABLED))) {
                 updateShakeListener();
             } else if (uri.equals(Settings.System.getUriFor(
@@ -746,6 +753,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mNotificationShortcutsIsActive = !(notificationShortcutsIsActive == null
                     || notificationShortcutsIsActive.isEmpty());
 
+            mWeatherPanelEnabled = (Settings.System.getInt(resolver,
+                    Settings.System.STATUSBAR_WEATHER_STYLE, 2) == 1)
+                    && (Settings.System.getBoolean(resolver, Settings.System.USE_WEATHER, false));
+            mWeatherPanel.setVisibility(mWeatherPanelEnabled ? View.VISIBLE : View.GONE);
+
             if (mCarrierLabel != null) {
                 mHideLabels = Settings.System.getIntForUser(resolver,
                         Settings.System.NOTIFICATION_HIDE_LABELS, 0, UserHandle.USER_CURRENT);
@@ -782,18 +794,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 			enableOrDisableWeather();
 		}
         }
-    }
-
-    private boolean isPieEnabled() {
-        return Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.PIE_CONTROLS, 0,
-                UserHandle.USER_CURRENT) == 1;
-    }
-
-    private boolean isExpanded() {
-        return Settings.System.getIntForUser(mContext.getContentResolver(),
-                Settings.System.EXPANDED_DESKTOP_STATE, 0,
-                UserHandle.USER_CURRENT) == 1;
     }
 
     private void updateBatteryIcons() {
@@ -1106,7 +1106,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             }});
 
         mStatusBarView = (PhoneStatusBarView) mStatusBarWindow.findViewById(R.id.status_bar);
+        mStatusBarView.setStatusBar(this);
         mStatusBarView.setBar(this);
+
+        // Weather
+        final ContentResolver cr = mContext.getContentResolver();
+        mWeatherPanel = (WeatherPanel) mStatusBarWindow.findViewById(R.id.weatherpanel);
+        mWeatherPanel.setOnClickListener(mWeatherPanelListener);
+        mWeatherPanelEnabled = (Settings.System.getInt(cr,
+                Settings.System.STATUSBAR_WEATHER_STYLE, 2) == 1)
+                && (Settings.System.getBoolean(cr, Settings.System.USE_WEATHER, false));
+        mWeatherPanel.setVisibility(mWeatherPanelEnabled ? View.VISIBLE : View.GONE);
 
         PanelHolder holder = (PanelHolder) mStatusBarWindow.findViewById(R.id.panel_holder);
         mStatusBarView.setPanelHolder(holder);
@@ -1172,7 +1182,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
             mNavigationBarView.setDisabledFlags(mDisabled);
             mNavigationBarView.setBar(this);
-            addNavigationBarCallback(mNavigationBarView);
             mNavigationBarView.setOnTouchListener(new View.OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
@@ -1189,9 +1198,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             addGestureAnywhereView();
             /* ChaosLab: GestureAnywhere - END */
         }
-
-        // Setup pie container if enabled
-        attachPieContainer(isPieEnabled());
 
         // figure out which pixel-format to use for the status bar.
         mPixelFormat = PixelFormat.OPAQUE;
@@ -1373,6 +1379,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         // Other icons
         final SignalClusterView signalCluster =
                 (SignalClusterView)mStatusBarView.findViewById(R.id.signal_cluster);
+
+        mBatteryTextView = (BatteryTextMeterView) mStatusBarView.findViewById(R.id.battery_text);
+        mBatteryController.addStateChangedCallback((BatteryStateChangeCallback) mBatteryTextView);
 
         mNetworkController.addSignalCluster(signalCluster);
         signalCluster.setNetworkController(mNetworkController);
@@ -1670,6 +1679,11 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     }
 
     @Override
+    public QuickSettingsContainerView getQuickSettingsPanel() {
+        return mSettingsContainer;
+    }
+
+    @Override
     protected WindowManager.LayoutParams getSearchLayoutParams(LayoutParams layoutParams) {
         boolean opaque = false;
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
@@ -1851,8 +1865,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         prepareNavigationBarView();
 
         mWindowManager.addView(mNavigationBarView, getNavigationBarLayoutParams());
-        mNavigationBarOverlay.setNavigationBar(mNavigationBarView);
-        mNavigationBarOverlay.setIsExpanded(isExpanded());
     }
 
     private void repositionNavigationBar() {
@@ -1877,12 +1889,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                     | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                     | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
-                    | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH,
+                    | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH
+                    | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
                 PixelFormat.TRANSLUCENT);
-        // this will allow the navbar to run in an overlay on devices that support this
-        if (ActivityManager.isHighEndGfx()) {
-            lp.flags |= WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
-        }
 
         lp.setTitle("NavigationBar");
         lp.windowAnimations = 0;
@@ -1898,11 +1907,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         WindowManager.LayoutParams lp = new WindowManager.LayoutParams(
                 LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT,
                 WindowManager.LayoutParams.TYPE_STATUS_BAR_PANEL, // above the status bar!
-                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
+                WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
+                        | WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+                        | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                        | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                         | WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM
                         | WindowManager.LayoutParams.FLAG_WATCH_OUTSIDE_TOUCH
-                        | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH,
-                  PixelFormat.TRANSPARENT);
+                        | WindowManager.LayoutParams.FLAG_SPLIT_TOUCH
+                        | WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED,
+                PixelFormat.TRANSLUCENT);
         if (ActivityManager.isHighEndGfx()) {
             lp.flags |= WindowManager.LayoutParams.FLAG_HARDWARE_ACCELERATED;
         }
@@ -2493,8 +2506,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         | StatusBarManager.DISABLE_BACK
                         | StatusBarManager.DISABLE_SEARCH)) != 0) {
 
-            // All navigation bar listeners will take care of these
-            propagateDisabledFlags(state);
+            // the nav bar will take care of these
+            if (mNavigationBarView != null) mNavigationBarView.setDisabledFlags(state);
 
             if ((state & StatusBarManager.DISABLE_RECENT) != 0) {
                 // close recents if it's visible
@@ -2752,6 +2765,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         animateCollapsePanels(CommandQueue.FLAG_EXCLUDE_NONE);
     }
 
+    @Override
     public void animateCollapsePanels(int flags) {
         if (SPEW) {
             Log.d(TAG, "animateCollapse():"
@@ -2774,7 +2788,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mStatusBarWindow.cancelExpandHelper();
         mStatusBarView.collapseAllPanels(true);
-        if(mHover.isShowing() && !mHover.isHiding()) mHover.dismissHover(false, false);
+        super.animateCollapsePanels(flags);
+        if (mHover.isShowing() && !mHover.isHiding()) mHover.dismissHover(false, false);
     }
 
     public ViewPropertyAnimator setVisibilityWhenDone(
@@ -3340,7 +3355,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
         mNavigationIconHints = hints;
 
-        propagateNavigationIconHints(hints);
+         if (mNavigationBarView != null) {
+             mNavigationBarView.setNavigationIconHints(hints);
+         }
 
         checkBarModes();
     }
@@ -3639,11 +3656,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
 
     @Override
     public void topAppWindowChanged(boolean showMenu) {
+        if (mPieControlPanel != null)
+            mPieControlPanel.setMenu(showMenu);
         if (DEBUG) {
             Log.d(TAG, (showMenu?"showing":"hiding") + " the MENU button");
         }
 
-        propagateMenuVisibility(showMenu);
+         if (mNavigationBarView != null) {
+            mNavigationBarView.setMenuVisibility(showMenu);
+        }
 
         // See above re: lights-out policy for legacy apps.
         if (showMenu) setLightsOn(true);
@@ -4084,6 +4105,17 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         animateCollapsePanels();
     }
 
+    private View.OnClickListener mWeatherPanelListener = new View.OnClickListener() {
+        public void onClick(View v) {
+            vibrate();
+            animateCollapsePanels();
+            Intent weatherintent = new Intent("com.android.settings.INTENT_WEATHER_REQUEST");
+            weatherintent.putExtra("com.android.settings.INTENT_EXTRA_TYPE", "updateweather");
+            weatherintent.putExtra("com.android.settings.INTENT_EXTRA_ISMANUAL", true);
+            mContext.sendBroadcast(weatherintent);
+        }
+    };
+
     private View.OnClickListener mReminderButtonListener = new View.OnClickListener() {
         public void onClick(View v) {
             startActivityDismissingKeyguard(new Intent(
@@ -4456,7 +4488,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mStatusBarContainer.addView(mStatusBarWindow);
 
         updateExpandedViewPos(EXPANDED_LEAVE_ALONE);
-        restorePieTriggerMask();
 
         mRecreating = false;
 

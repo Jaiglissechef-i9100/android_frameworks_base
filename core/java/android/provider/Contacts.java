@@ -210,7 +210,6 @@ public class Contacts {
                 return cursor.getString(0);
             } finally {
                 cursor.close();
-				}
             }
         }
 

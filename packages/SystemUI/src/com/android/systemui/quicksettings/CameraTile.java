@@ -478,7 +478,7 @@ public class CameraTile extends QuickSettingsTile {
 
             try {
                 uri = resolver.insert(Images.Media.EXTERNAL_CONTENT_URI, values);
-            } catch (Throwable th)  {
+            } catch (Throwable th) {
                 // This can happen when the external volume is already mounted, but
                 // MediaScanner has not notify MediaProvider to add that volume.
                 // The picture is still safe and MediaScanner will find it and

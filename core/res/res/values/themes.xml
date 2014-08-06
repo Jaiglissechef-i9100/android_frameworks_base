@@ -1147,9 +1147,9 @@ please see themes_device_defaults.xml.
         <item name="yesNoPreferenceStyle">@android:style/Preference.Holo.DialogPreference.YesNoPreference</item>
         <item name="dialogPreferenceStyle">@android:style/Preference.Holo.DialogPreference</item>
         <item name="editTextPreferenceStyle">@android:style/Preference.Holo.DialogPreference.EditTextPreference</item>
-        <item name="ringtonePreferenceStyle">@android:style/Preference.Holo.RingtonePreference</item>
+        <item name="ringtonePreferenceStyle">@android:style/Preference.Holo.Light.RingtonePreference</item>
         <item name="preferenceLayoutChild">@android:layout/preference_child_holo</item>
-        <item name="detailsElementBackground">@android:drawable/panel_bg_holo_dark</item>
+        <item name="detailsElementBackground">@android:drawable/panel_bg_holo_light</item>
 
         <!-- Search widget styles -->
         <item name="searchWidgetCorpusItemBackground">@android:color/search_widget_corpus_item_background</item>
@@ -1450,21 +1450,6 @@ please see themes_device_defaults.xml.
         <item name="popupMenuStyle">@android:style/Widget.Holo.Light.PopupMenu</item>
         <item name="stackViewStyle">@android:style/Widget.Holo.StackView</item>
         <item name="activityChooserViewStyle">@android:style/Widget.Holo.Light.ActivityChooserView</item>
-
-        <!-- Preference styles -->
-        <item name="preferenceScreenStyle">@android:style/Preference.Holo.PreferenceScreen</item>
-        <item name="preferenceFragmentStyle">@style/PreferenceFragment.Holo</item>
-        <item name="preferenceCategoryStyle">@android:style/Preference.Holo.Category</item>
-        <item name="preferenceStyle">@android:style/Preference.Holo</item>
-        <item name="preferenceInformationStyle">@android:style/Preference.Holo.Information</item>
-        <item name="checkBoxPreferenceStyle">@android:style/Preference.Holo.CheckBoxPreference</item>
-        <item name="switchPreferenceStyle">@android:style/Preference.Holo.SwitchPreference</item>
-        <item name="yesNoPreferenceStyle">@android:style/Preference.Holo.DialogPreference.YesNoPreference</item>
-        <item name="dialogPreferenceStyle">@android:style/Preference.Holo.DialogPreference</item>
-        <item name="editTextPreferenceStyle">@android:style/Preference.Holo.DialogPreference.EditTextPreference</item>
-        <item name="ringtonePreferenceStyle">@android:style/Preference.Holo.Light.RingtonePreference</item>
-        <item name="preferenceLayoutChild">@android:layout/preference_child_holo</item>
-        <item name="detailsElementBackground">@android:drawable/panel_bg_holo_light</item>
 
         <!-- PreferenceFrameLayout attributes -->
         <item name="preferenceFrameLayoutStyle">@android:style/Widget.Holo.PreferenceFrameLayout</item>

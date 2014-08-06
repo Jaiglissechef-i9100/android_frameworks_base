@@ -39,7 +39,7 @@
             android:id="@+id/clock"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
+            android:layout_marginEnd="5dp"
             android:singleLine="true"
             android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Clock"
             android:background="@drawable/ic_notify_button_bg"
@@ -53,9 +53,6 @@
             android:layout_height="wrap_content"
             android:textAppearance="@style/TextAppearance.StatusBar.Expanded.Date"
             android:layout_toEndOf="@id/clock"
-            android:background="@drawable/ic_notify_button_bg"
-            android:paddingTop="8dp"
-            android:paddingBottom="8dp"
             android:layout_centerVertical="true"
             />
     </RelativeLayout>
@@ -78,7 +75,7 @@
         android:textSize="11dp"
         android:textStyle="bold"
         android:textColor="#00A040"
-        android:padding="2dp"
+        android:padding="0dp"
         />
 
     <ImageView android:id="@+id/clear_all_button"
@@ -112,7 +109,7 @@
     <FrameLayout android:id="@+id/settings_button_holder"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:layout_marginStart="5dp"
+        android:layout_alignRight="@+id/header"
         >
         <ImageView android:id="@+id/settings_button"
             android:layout_width="50dp"

@@ -109,6 +109,7 @@ jint copyValue(JNIEnv* env, jobject outValue, const ResTable* table,
     return block;
 }
 
+
 // This is called by zygote (running as user root) as part of preloadResources.
 static void verifySystemIdmaps()
 {
@@ -610,12 +611,6 @@ static jint android_content_AssetManager_addOverlayPath(JNIEnv* env, jobject cla
 
     ScopedUtfChars targetPkgPath8(env, targetPkgPath);
     if (targetPkgPath8.c_str() == NULL) {
-
-static jint android_content_AssetManager_addOverlayPath(JNIEnv* env, jobject clazz,
-                                                     jstring idmapPath)
-{
-    ScopedUtfChars idmapPath8(env, idmapPath);
-    if (idmapPath8.c_str() == NULL) {
         return 0;
     }
 
@@ -2058,7 +2053,6 @@ static JNINativeMethod gAssetManagerMethods[] = {
     // Bookkeeping.
     { "init",           "()V",
     { "init", "(Z)V",
-    { "init",           "(Z)V",
         (void*) android_content_AssetManager_init },
     { "destroy",        "()V",
         (void*) android_content_AssetManager_destroy },

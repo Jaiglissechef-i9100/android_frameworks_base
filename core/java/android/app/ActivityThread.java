@@ -1539,11 +1539,11 @@ public final class ActivityThread {
     /**
      * Creates the top level resources for the given package.
      */
-    Resources getTopLevelResources(String resDir, String[] overlayDirs,
+    Resources getTopLevelResources(String resDir,
             int displayId, Configuration overrideConfiguration,
-            LoadedApk pkgInfo) {
-        return mResourcesManager.getTopLevelResources(resDir, overlayDirs, displayId,
-                overrideConfiguration, pkgInfo.getCompatibilityInfo(), null);
+            LoadedApk pkgInfo, Context context, String pkgName) {
+        return mResourcesManager.getTopLevelResources(resDir, overlayDirs, displayId, pkgName,
+                overrideConfiguration, pkgInfo.getCompatibilityInfo(), null, context);
     }
 
     final Handler getHandler() {

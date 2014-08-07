@@ -842,8 +842,10 @@
          that matches the signature of at least one package on this list.
          -->
     <string-array name="config_locationProviderPackageNames" translatable="false">
-        <!-- The standard AOSP fused location provider -->
-        <item>com.android.location.fused</item>
+    <!-- The standard AOSP fused location provider -->
+    <item>com.android.location.fused</item>
+    <item>com.google.android.location</item>
+    <item>com.google.android.gms</item>
     </string-array>
 
     <!-- Component name of the geofence services provider. -->
@@ -1403,7 +1405,7 @@
 
     <!-- Timeout in MS for how long you have to long-press the back key to
          kill the foreground app. -->
-    <integer name="config_backKillTimeout">2000</integer>
+    <integer name="config_backKillTimeout">750</integer>
 
     <!-- Device has a h/w rotation lock switch -->
     <bool name="config_hasRotationLockSwitch">false</bool>
@@ -1492,9 +1494,12 @@
          (without "Focus" state) instead of Dual-stage. -->
     <bool name="config_singleStageCameraKey">false</bool>
 
-   <!-- set to false if we dont need to consider data
+    <!-- set to false if we dont need to consider data
          service state to display signal strength bars -->
     <bool name="config_combined_signal">true</bool>
+
+    <!-- Boolean to enable adb by default on a per-device basis -->
+    <bool name="config_enableAdbByDefault">true</bool>
 
     <!-- bool value to for enabling motion accelerometer -->
     <bool name="use_motion_accel">false</bool>

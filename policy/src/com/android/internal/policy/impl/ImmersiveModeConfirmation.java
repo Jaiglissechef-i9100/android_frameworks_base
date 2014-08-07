@@ -224,13 +224,8 @@ public class ImmersiveModeConfirmation {
             float density = metrics.density;
 
             // create the confirmation cling
-            if (mStatusBarHidden) {
-                mClingLayout = (ViewGroup)
-                        View.inflate(getUiContext(), R.layout.immersive_mode_cling, null);
-            } else {
-                mClingLayout = (ViewGroup)
-                        View.inflate(getUiContext(), R.layout.immersive_mode_cling_bottom, null);
-            }
+            mClingLayout = (ViewGroup)
+                    View.inflate(getContext(), R.layout.immersive_mode_cling, null);
 
             final Button ok = (Button) mClingLayout.findViewById(R.id.ok);
             ok.setOnClickListener(new OnClickListener() {

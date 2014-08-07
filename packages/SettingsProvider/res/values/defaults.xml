@@ -199,4 +199,7 @@
     <!-- Default theme -->
     <string name="def_theme_package"></string>
     <string name="def_theme_components"></string>
+
+    <!-- Default for Settings.System.LOCKSCREEN_TARGETS. -->
+    <string name="def_lockscreen_targets" translatable="false"></string>
 </resources>

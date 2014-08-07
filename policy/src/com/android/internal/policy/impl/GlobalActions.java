@@ -83,7 +83,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import com.android.internal.app.ThemeUtils;
 import com.android.internal.statusbar.IStatusBarService;
 import com.android.internal.util.beanstalk.ButtonConfig;
 import com.android.internal.util.beanstalk.ImageHelper;

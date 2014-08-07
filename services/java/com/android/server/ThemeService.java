@@ -75,7 +75,7 @@ import static android.content.res.ThemeConfig.HOLO_DEFAULT;
 
 import java.util.List;
 
-import com.android.internal.util.cm.LockscreenBackgroundUtil;
+import com.android.internal.util.beanstalk.LockscreenBackgroundUtil;
 
 /**
  * {@hide}
@@ -500,10 +500,6 @@ public class ThemeService extends IThemeService.Stub {
         Settings.System.putInt(mContext.getContentResolver(), Settings.System.LOCKSCREEN_BACKGROUND_STYLE,
                 LockscreenBackgroundUtil.LOCKSCREEN_STYLE_IMAGE);
         return true;
-
-    private void updateLockscreen() {
-        // TODO: implement actual behavior
-        sleepQuiet(100);
     }
 
     private boolean updateWallpaper() {
@@ -828,44 +824,6 @@ public class ThemeService extends IThemeService.Stub {
         File anim = new File(SYSTEM_THEME_PATH + File.separator + "bootanimation.zip");
         if (anim.exists())
             anim.delete();
-    }
-
-    public void applyDefaultTheme() {
-        mContext.enforceCallingOrSelfPermission(
-                Manifest.permission.ACCESS_THEME_MANAGER, null);
-        final ContentResolver resolver = mContext.getContentResolver();
-        final String defaultThemePkg = Settings.Secure.getString(resolver,
-                Settings.Secure.DEFAULT_THEME_PACKAGE);
-        final boolean shouldApply = !TextUtils.isEmpty(defaultThemePkg) &&
-                Settings.Secure.getInt(resolver,
-                        Settings.Secure.DEFAULT_THEME_APPLIED_ON_FIRST_BOOT, 0) == 0;
-        if (shouldApply) {
-            String defaultThemeComponents = Settings.Secure.getString(resolver,
-                    Settings.Secure.DEFAULT_THEME_COMPONENTS);
-            List<String> components;
-            if (TextUtils.isEmpty(defaultThemeComponents)) {
-                components = new ArrayList<String>(9);
-                components.add(ThemesContract.ThemesColumns.MODIFIES_FONTS);
-                components.add(ThemesContract.ThemesColumns.MODIFIES_LAUNCHER);
-                components.add(ThemesContract.ThemesColumns.MODIFIES_ALARMS);
-                components.add(ThemesContract.ThemesColumns.MODIFIES_BOOT_ANIM);
-                components.add(ThemesContract.ThemesColumns.MODIFIES_ICONS);
-                components.add(ThemesContract.ThemesColumns.MODIFIES_LOCKSCREEN);
-                components.add(ThemesContract.ThemesColumns.MODIFIES_NOTIFICATIONS);
-                components.add(ThemesContract.ThemesColumns.MODIFIES_OVERLAYS);
-                components.add(ThemesContract.ThemesColumns.MODIFIES_RINGTONES);
-            } else {
-                components = new ArrayList<String>(
-                        Arrays.asList(defaultThemeComponents.split("\\|")));
-            }
-            try {
-                requestThemeChange(defaultThemePkg, components);
-                Settings.Secure.putInt(resolver,
-                        Settings.Secure.DEFAULT_THEME_APPLIED_ON_FIRST_BOOT, 1);
-            } catch (RemoteException e) {
-                Log.w(TAG, "Unable to set default theme", e);
-            }
-        }
     }
 
     private BroadcastReceiver mWallpaperChangeReceiver = new BroadcastReceiver() {

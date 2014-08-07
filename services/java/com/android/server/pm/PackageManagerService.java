@@ -5402,21 +5402,25 @@ public class PackageManagerService extends IPackageManager.Stub {
                 }
             }
 
+            // Generate resources & idmaps if pkg is NOT a theme
+            // We must compile resources here because during the initial boot process we may get
+            // here before a default theme has had a chance to compile its resources
+            if (pkg.mOverlayTargets.isEmpty() && mOverlays.containsKey(pkg.packageName)) {
+                HashMap<String, PackageParser.Package> themes = mOverlays.get(pkg.packageName);
+                for(PackageParser.Package themePkg : themes.values()) {
+                    try {
+                        compileResourcesAndIdmapIfNeeded(pkg, themePkg);
+                    } catch(Exception e) {
+                        // Do not stop a pkg installation just because of one bad theme
+                        // Also we don't break here because we should try to compile other themes
+                        Log.e(TAG, "Unable to compile " + themePkg.packageName
+                                + " for target " + pkg.packageName, e);
+                    }
+                }
+            }
+
             // Generate Idmaps and res tables if pkg is a theme
             for(String target : pkg.mOverlayTargets) {
-                try {
-                    ThemeUtils.createCacheDirIfNotExists();
-                    if (hasCommonResources(pkg)
-                            && shouldCompileCommonResources(pkg)) {
-                        ThemeUtils.createCacheDirIfNotExists();
-                        ThemeUtils.createResourcesDirIfNotExists(COMMON_OVERLAY,
-                                pkg.applicationInfo.publicSourceDir);
-                        compileResources(COMMON_OVERLAY, pkg);
-                        mAvailableCommonResources.put(pkg.packageName, System.currentTimeMillis());
-                    }
-                    ThemeUtils.createResourcesDirIfNotExists(target, pkg.applicationInfo.publicSourceDir);
-                    compileResources(target, pkg);
-                    generateIdmap(target, pkg);
                 Exception failedException = null;
 
                 insertIntoOverlayMap(target, pkg);
@@ -5429,9 +5433,15 @@ public class PackageManagerService extends IPackageManager.Stub {
                     failedException = e;
                     mLastScanError = PackageManager.INSTALL_FAILED_THEME_AAPT_ERROR;
                 } catch(Exception e) {
-                    Log.w(TAG, "Unable to process theme " + pkgName, e);
-                    mLastScanError = PackageManager.INSTALL_FAILED_INTERNAL_ERROR;
+                    failedException = e;
+                    mLastScanError = PackageManager.INSTALL_FAILED_THEME_UNKNOWN_ERROR;
+                }
+
+                if (failedException != null) {
+                    // Theme install failed, cleanup!
+                    Log.w(TAG, "Unable to process theme " + pkgName, failedException);
                     uninstallThemeForAllApps(pkg);
+                    deletePackageLI(pkg.packageName, null, true, null, null, 0, null, false);
                     return null;
                 }
             }

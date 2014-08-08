@@ -125,7 +125,6 @@ import com.android.systemui.DemoMode;
 import com.android.systemui.EventLogTags;
 
 import com.android.systemui.statusbar.powerwidget.PowerWidget;
-import com.android.systemui.statusbar.policy.WeatherPanel;
 
 import com.android.systemui.R;
 import com.android.systemui.ReminderMessageView;
@@ -294,10 +293,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
     View mDateViewExpanded;
     View mClearButton;
     ImageView mSettingsButton, mNotificationButton;
-
-    // Weatherpanel
-    boolean mWeatherPanelEnabled;
-    WeatherPanel mWeatherPanel;
 
     // carrier/wifi label
     private TextView mCarrierLabel;
@@ -563,10 +558,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     Settings.System.QUICK_TILES_BG_ALPHA),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUSBAR_WEATHER_STYLE), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.USE_WEATHER), false, this);
-            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_CUSTOM_HEADER), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.PIE_CONTROLS), false, this,
@@ -765,11 +756,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             mNotificationShortcutsIsActive = !(notificationShortcutsIsActive == null
                     || notificationShortcutsIsActive.isEmpty());
 
-            mWeatherPanelEnabled = (Settings.System.getInt(resolver,
-                    Settings.System.STATUSBAR_WEATHER_STYLE, 2) == 1)
-                    && (Settings.System.getBoolean(resolver, Settings.System.USE_WEATHER, false));
-            mWeatherPanel.setVisibility(mWeatherPanelEnabled ? View.VISIBLE : View.GONE);
-
             if (mCarrierLabel != null) {
                 mHideLabels = Settings.System.getIntForUser(resolver,
                         Settings.System.NOTIFICATION_HIDE_LABELS, 0, UserHandle.USER_CURRENT);
@@ -800,7 +786,8 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                 enableOrDisableReminder();
             }
 
-	        boolean weatherHolder = Settings.System.getBoolean					(resolver,Settings.System.SYSTEMUI_WEATHER_HEADER_VIEW, false);
+            boolean weatherHolder = Settings.System.getBoolean
+                                (resolver,Settings.System.SYSTEMUI_WEATHER_HEADER_VIEW, false);
 		if (weatherHolder != mWeatherEnabled) {
 			mWeatherEnabled = weatherHolder;
 			enableOrDisableWeather();
@@ -1130,15 +1117,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         mStatusBarView = (PhoneStatusBarView) mStatusBarWindow.findViewById(R.id.status_bar);
         mStatusBarView.setStatusBar(this);
         mStatusBarView.setBar(this);
-
-        // Weather
-        final ContentResolver cr = mContext.getContentResolver();
-        mWeatherPanel = (WeatherPanel) mStatusBarWindow.findViewById(R.id.weatherpanel);
-        mWeatherPanel.setOnClickListener(mWeatherPanelListener);
-        mWeatherPanelEnabled = (Settings.System.getInt(cr,
-                Settings.System.STATUSBAR_WEATHER_STYLE, 2) == 1)
-                && (Settings.System.getBoolean(cr, Settings.System.USE_WEATHER, false));
-        mWeatherPanel.setVisibility(mWeatherPanelEnabled ? View.VISIBLE : View.GONE);
 
         PanelHolder holder = (PanelHolder) mStatusBarWindow.findViewById(R.id.panel_holder);
         mStatusBarView.setPanelHolder(holder);
@@ -4156,17 +4134,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
         }
         animateCollapsePanels();
     }
-
-    private View.OnClickListener mWeatherPanelListener = new View.OnClickListener() {
-        public void onClick(View v) {
-            vibrate();
-            animateCollapsePanels();
-            Intent weatherintent = new Intent("com.android.settings.INTENT_WEATHER_REQUEST");
-            weatherintent.putExtra("com.android.settings.INTENT_EXTRA_TYPE", "updateweather");
-            weatherintent.putExtra("com.android.settings.INTENT_EXTRA_ISMANUAL", true);
-            mContext.sendBroadcast(weatherintent);
-        }
-    };
 
     private View.OnClickListener mReminderButtonListener = new View.OnClickListener() {
         public void onClick(View v) {

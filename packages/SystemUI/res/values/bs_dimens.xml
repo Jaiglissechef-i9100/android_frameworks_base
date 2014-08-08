@@ -73,9 +73,6 @@
     <dimen name="halo_speech_vpadding_bottom">3dp</dimen>
     <dimen name="halo_content_max_width">250dp</dimen>
 
-    <!-- Height of carrier label + close handle -->
-    <dimen name="weather_text_margin">56dp</dimen>
-
     <!-- Slim recent -->
     <dimen name="recent_width">230dp</dimen>
     <dimen name="recent_app_icon_size">48dp</dimen>
@@ -113,7 +110,5 @@
     <dimen name="shadow_width">8dp</dimen>
     <dimen name="layer_width">300dp</dimen>
     <dimen name="offset_width">48dp</dimen>
-
-    <dimen name="weather_text_margin">56dp</dimen>
 
 </resources>

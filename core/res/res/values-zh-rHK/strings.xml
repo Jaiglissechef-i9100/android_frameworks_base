@@ -1665,6 +1665,4 @@
   </plurals>
     <string name="restr_pin_try_later" msgid="973144472490532377">"稍後再試"</string>
     <string name="immersive_mode_confirmation" msgid="7227416894979047467">"由頂端往下快速滑動即可離開全螢幕。"</string>
-    <!--  Weather -->
-    <string name="weatherpanel_slash">/</string>
 </resources>

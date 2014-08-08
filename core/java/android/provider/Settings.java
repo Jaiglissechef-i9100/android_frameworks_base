@@ -5513,33 +5513,6 @@ public final class Settings {
         public static final String HOME_UNLOCK_SCREEN = "home_unlock_screen";
 
         /**
-         * @hide
-         */
-        public static final String WEATHER_PANEL_LONGCLICK = "weather_panel_longclick";
-
-        /**
-         * @hide
-         */
-        public static final String WEATHER_PANEL_SHORTCLICK = "weather_panel_shortclick";
-
-        /**
-         * How to show weather on the statusbar
-         *
-         * @hide
-         */
-        public static final String STATUSBAR_WEATHER_STYLE = "statusbar_weather_style";
-
-        /**
-         * @hide
-         */
-        public static final String USE_WEATHER = "use_weather";
-
-        /**
-         * @hide
-         */
-        public static final String WEATHER_SHOW_LOCATION = "weather_show_location";
-
-        /**
          * Whether to unlock the screen with the camera key.  The value is boolean (1 or 0).
          * @hide
          */

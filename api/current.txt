@@ -2755,6 +2755,7 @@ package android.app {
     method public void finishActivity(int);
     method public void finishActivityFromChild(android.app.Activity, int);
     method public void finishAffinity();
+    method public void finishFloating();
     method public void finishFromChild(android.app.Activity);
     method public android.app.ActionBar getActionBar();
     method public final android.app.Application getApplication();
@@ -3824,6 +3825,14 @@ package android.app {
     field public android.content.pm.ResolveInfo resolveInfo;
   }
 
+  public class LayerActivity extends android.app.Activity {
+    ctor public LayerActivity();
+    method public void onCreate(android.os.Bundle);
+    method public void onResume();
+    method public void onStart();
+    method public void onStop();
+  }
+
   public class ListActivity extends android.app.Activity {
     ctor public ListActivity();
     method public android.widget.ListAdapter getListAdapter();
@@ -4289,6 +4298,7 @@ package android.app {
     method public android.content.Intent[] getIntents();
     method public android.app.PendingIntent getPendingIntent(int, int);
     method public android.app.PendingIntent getPendingIntent(int, int, android.os.Bundle);
+    method public void setTaskOnHome(boolean);
     method public void startActivities();
     method public void startActivities(android.os.Bundle);
   }
@@ -6534,6 +6544,7 @@ package android.content {
     field public static final int FLAG_ACTIVITY_TASK_ON_HOME = 16384; // 0x4000
     field public static final int FLAG_DEBUG_LOG_RESOLUTION = 8; // 0x8
     field public static final int FLAG_EXCLUDE_STOPPED_PACKAGES = 16; // 0x10
+    field public static final int FLAG_FLOATING_WINDOW = 8192; // 0x2000
     field public static final int FLAG_FROM_BACKGROUND = 4; // 0x4
     field public static final int FLAG_GRANT_PERSISTABLE_URI_PERMISSION = 64; // 0x40
     field public static final int FLAG_GRANT_READ_URI_PERMISSION = 1; // 0x1
@@ -10548,7 +10559,6 @@ package android.hardware {
     method public int getJpegQuality();
     method public int getJpegThumbnailQuality();
     method public android.hardware.Camera.Size getJpegThumbnailSize();
-    method public java.lang.String getPowerMode();
     method public int getMaxExposureCompensation();
     method public int getMaxNumDetectedFaces();
     method public int getMaxNumFocusAreas();
@@ -10558,6 +10568,7 @@ package android.hardware {
     method public int getMinExposureCompensation();
     method public int getPictureFormat();
     method public android.hardware.Camera.Size getPictureSize();
+    method public java.lang.String getPowerMode();
     method public android.hardware.Camera.Size getPreferredPreviewSizeForVideo();
     method public int getPreviewFormat();
     method public void getPreviewFpsRange(int[]);
@@ -21096,6 +21107,8 @@ package android.provider {
     field public static final java.lang.String DEVICE_PROVISIONED = "device_provisioned";
     field public static final java.lang.String HTTP_PROXY = "http_proxy";
     field public static final java.lang.String INSTALL_NON_MARKET_APPS = "install_non_market_apps";
+    field public static final java.lang.String LISTVIEW_ANIMATION = "listview_animation";
+    field public static final java.lang.String LISTVIEW_INTERPOLATOR = "listview_interpolator";
     field public static final java.lang.String MODE_RINGER = "mode_ringer";
     field public static final java.lang.String NETWORK_PREFERENCE = "network_preference";
     field public static final java.lang.String RADIO_BLUETOOTH = "bluetooth";
@@ -21294,6 +21307,7 @@ package android.provider {
     field public static final deprecated java.lang.String SHOW_PROCESSES = "show_processes";
     field public static final deprecated java.lang.String SHOW_WEB_SUGGESTIONS = "show_web_suggestions";
     field public static final java.lang.String SOUND_EFFECTS_ENABLED = "sound_effects_enabled";
+    field public static final java.lang.String STATUS_BAR_TRAFFIC = "status_bar_traffic";
     field public static final deprecated java.lang.String STAY_ON_WHILE_PLUGGED_IN = "stay_on_while_plugged_in";
     field public static final java.lang.String SYS_PROP_SETTING_VERSION = "sys.settings_system_version";
     field public static final java.lang.String TEXT_AUTO_CAPS = "auto_caps";
@@ -28665,6 +28679,7 @@ package android.view {
     field public static final int PROGRESS_START = 0; // 0x0
     field public static final int PROGRESS_VISIBILITY_OFF = -2; // 0xfffffffe
     field public static final int PROGRESS_VISIBILITY_ON = -1; // 0xffffffff
+    field public boolean mIsFloatingWindow;
   }
 
   public static abstract interface Window.Callback {
@@ -30478,6 +30493,7 @@ package android.widget {
     method public void setFastScrollEnabled(boolean);
     method public void setFilterText(java.lang.String);
     method public void setFriction(float);
+    method public void setGridView(boolean);
     method public void setItemChecked(int, boolean);
     method public void setMultiChoiceModeListener(android.widget.AbsListView.MultiChoiceModeListener);
     method public void setOnScrollListener(android.widget.AbsListView.OnScrollListener);

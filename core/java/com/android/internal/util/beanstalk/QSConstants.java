@@ -67,6 +67,7 @@ public class QSConstants {
         public static final String TILE_FCHARGE = "toggleFastCharge";
         public static final String TILE_BATTERYSAVER = "toggleBatterySaver";
         public static final String TILE_DELIMITER = "|";
+        public static final String TILE_WEATHER = "toogleweather";
         public static ArrayList<String> TILES_DEFAULT = new ArrayList<String>();
 
         static {

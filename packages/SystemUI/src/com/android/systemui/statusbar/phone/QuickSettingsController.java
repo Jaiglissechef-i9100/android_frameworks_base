@@ -62,6 +62,7 @@ import static com.android.internal.util.beanstalk.QSConstants.TILE_INTERNALMEMOR
 import static com.android.internal.util.beanstalk.QSConstants.TILE_FCHARGE;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_ONTHEGO;
 import static com.android.internal.util.beanstalk.QSConstants.TILE_REMOTEDISPLAY;
+import static com.android.internal.util.ose.QSConstants.TILE_WEATHER;
 
 import android.app.Activity;
 import android.app.ActivityManagerNative;
@@ -70,18 +71,23 @@ import android.app.Dialog;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.net.Uri;
 import android.os.Handler;
 import android.os.Message;
+import android.os.RemoteException;
 import android.os.SystemProperties;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.WindowManager;
+import android.view.WindowManagerGlobal;
 
 import com.android.internal.util.beanstalk.DeviceUtils;
 import com.android.systemui.quicksettings.AirplaneModeTile;
@@ -127,9 +133,11 @@ import com.android.systemui.quicksettings.WifiAPTile;
 import com.android.systemui.quicksettings.RebootTile;
 import com.android.systemui.quicksettings.FastChargeTile;
 import com.android.systemui.quicksettings.OnTheGoTile;
+import com.android.systemui.quicksettings.Weather;
 
+import com.android.systemui.R;
 
-
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -296,6 +304,9 @@ public class QuickSettingsController {
                 qs = new OnTheGoTile(mContext, this);
             } else if (tile.equals(TILE_BATTERYSAVER)) {
                 qs = new BatterySaverTile(mContext, this);
+            } else if (tile.equals(TILE_WEATHER)) {
+                qs = new Weather(mContext, this, mHandler);
+                WeatherDialog();
             }
 
             if (qs != null) {
@@ -476,4 +487,49 @@ public class QuickSettingsController {
             t.updateResources();
         }
     }
+
+    private void WeatherDialog() {
+        int check = filecheck("/sdcard/Android/data/weather.txt");
+        if ( check == 0 ) {
+        final AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setPositiveButton(R.string.weather_ok, new OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+
+            builder.setNegativeButton(R.string.weather_link, new OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                 Intent intent = new Intent();
+                 intent.setClassName("com.cyanogenmod.lockclock", "com.cyanogenmod.lockclock.preference.Preferences");
+                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                 mContext.startActivity(intent);
+                 }
+            });
+        builder.setMessage(R.string.weather_dialog_msg);
+        builder.setTitle(R.string.weather_notify);
+        builder.setCancelable(true);
+        final Dialog dialog = builder.create();
+        dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        try {
+            WindowManagerGlobal.getWindowManagerService().dismissKeyguard();
+        } catch (RemoteException e) {
+        }
+        dialog.show();
+        }
+    }
+
+    public  int filecheck(String PATH) {
+        File f = new File(PATH);
+        int isfile;
+        if (f.isFile()) {
+           isfile = 1;
+        return isfile;
+        } else {
+          isfile = 0 ;
+        return isfile;
+        }
+    }
+
 }

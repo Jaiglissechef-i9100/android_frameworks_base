@@ -88,8 +88,8 @@ public:
     virtual ~AssetManager(void);
 
     static int32_t getGlobalCount();
-
-    /*
+    
+    /*                                                                       
      * Add a new source for assets.  This can be called multiple times to
      * look in multiple places for assets.  It can be either a directory (for
      * finding assets as raw files on the disk) or a ZIP file.  This newly
@@ -115,7 +115,7 @@ public:
      */
     bool addDefaultAssets();
 
-    /*
+    /*                                                                       
      * Iterate over the asset paths in this manager.  (Previously
      * added via addAssetPath() and addDefaultAssets().)  On first call,
      * 'cookie' must be NULL, resulting in the first cookie being returned.
@@ -124,7 +124,7 @@ public:
      */
     void* nextAssetPath(void* cookie) const;
 
-    /*
+    /*                                                                       
      * Return an asset path in the manager.  'which' must be between 0 and
      * countAssetPaths().
      */
@@ -208,7 +208,7 @@ public:
      */
     FileType getFileType(const char* fileName);
 
-    /*
+    /*                                                                       
      * Return the complete resource table to find things in the package.
      */
     const ResTable& getResources(bool required = true) const;
@@ -227,7 +227,7 @@ public:
      * the current data.
      */
     bool isUpToDate();
-
+    
     /**
      * Get the known locales for this asset manager object.
      */
@@ -317,12 +317,12 @@ private:
 
         ResTable* getResourceTable();
         ResTable* setResourceTable(ResTable* res);
-
+        
         bool isUpToDate();
 
         void addOverlay(const asset_path& ap);
         bool getOverlay(size_t idx, asset_path* out) const;
-
+        
     protected:
         ~SharedZip();
 
@@ -374,7 +374,7 @@ private:
 
         void addOverlay(const String8& path, const asset_path& overlay);
         bool getOverlay(const String8& path, size_t idx, asset_path* out) const;
-
+        
     private:
         void closeZip(int idx);
 

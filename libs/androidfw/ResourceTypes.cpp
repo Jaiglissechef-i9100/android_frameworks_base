@@ -1620,7 +1620,7 @@ int ResTable_config::compare(const ResTable_config& o) const {
     if (diff != 0) return diff;
     diff = (int32_t)(screenLayout - o.screenLayout);
     if (diff != 0) return diff;
-    diff = (int32_t)(uiInvertedMode - o.uiInvertedMode);
+    diff = (int32_t)(uiThemeMode - o.uiThemeMode);
     if (diff != 0) return diff;
     diff = (int32_t)(uiMode - o.uiMode);
     if (diff != 0) return diff;
@@ -1682,8 +1682,8 @@ int ResTable_config::compareLogical(const ResTable_config& o) const {
     if (screenLayout != o.screenLayout) {
         return screenLayout < o.screenLayout ? -1 : 1;
     }
-    if (uiInvertedMode != o.uiInvertedMode) {
-        return uiInvertedMode < o.uiInvertedMode ? -1 : 1;
+    if (uiThemeMode != o.uiThemeMode) {
+        return uiThemeMode < o.uiThemeMode ? -1 : 1;
     }
     if (uiMode != o.uiMode) {
         return uiMode < o.uiMode ? -1 : 1;
@@ -1710,7 +1710,7 @@ int ResTable_config::diff(const ResTable_config& o) const {
     if (version != o.version) diffs |= CONFIG_VERSION;
     if ((screenLayout & MASK_LAYOUTDIR) != (o.screenLayout & MASK_LAYOUTDIR)) diffs |= CONFIG_LAYOUTDIR;
     if ((screenLayout & ~MASK_LAYOUTDIR) != (o.screenLayout & ~MASK_LAYOUTDIR)) diffs |= CONFIG_SCREEN_LAYOUT;
-    if (uiInvertedMode != o.uiInvertedMode) diffs |= CONFIG_UI_INVERTED_MODE;
+    if (uiThemeMode != o.uiThemeMode) diffs |= CONFIG_UI_THEME_MODE;
     if (uiMode != o.uiMode) diffs |= CONFIG_UI_MODE;
     if (smallestScreenWidthDp != o.smallestScreenWidthDp) diffs |= CONFIG_SMALLEST_SCREEN_SIZE;
     if (screenSizeDp != o.screenSizeDp) diffs |= CONFIG_SCREEN_SIZE;
@@ -1787,9 +1787,9 @@ bool ResTable_config::isMoreSpecificThan(const ResTable_config& o) const {
         if (!o.orientation) return true;
     }
 
-    if (uiInvertedMode != o.uiInvertedMode) {
-        if (!uiInvertedMode) return false;
-        if (!o.uiInvertedMode) return true;
+    if (uiThemeMode != o.uiThemeMode) {
+        if (!uiThemeMode) return false;
+        if (!o.uiThemeMode) return true;
     }
 
     if (uiMode || o.uiMode) {
@@ -1964,8 +1964,8 @@ bool ResTable_config::isBetterThan(const ResTable_config& o,
             return (orientation);
         }
 
-        if (uiInvertedMode != o.uiInvertedMode && requested->uiInvertedMode) {
-            return (uiInvertedMode);
+        if (uiThemeMode != o.uiThemeMode && requested->uiThemeMode) {
+            return (uiThemeMode);
         }
 
         if (uiMode || o.uiMode) {
@@ -2138,7 +2138,7 @@ bool ResTable_config::match(const ResTable_config& settings) const {
             return false;
         }
     }
-    if (uiInvertedMode != 0 && uiInvertedMode != settings.uiInvertedMode) {
+    if (uiThemeMode != 0 && uiThemeMode != settings.uiThemeMode) {
         return false;
     }
     if (screenConfig != 0) {
@@ -2334,17 +2334,17 @@ String8 ResTable_config::toString() const {
                 break;
         }
     }
-    if (uiInvertedMode != UI_INVERTED_MODE_ANY) {
+    if (uiThemeMode != UI_THEME_MODE_ANY) {
         if (res.size() > 0) res.append("-");
-        switch (uiInvertedMode) {
-            case ResTable_config::UI_INVERTED_MODE_YES:
-                res.append("inverted");
+        switch (uiThemeMode) {
+            case ResTable_config::UI_THEME_MODE_HOLO_DARK:
+                res.append("holodark");
                 break;
-            case ResTable_config::UI_INVERTED_MODE_NO:
-                res.append("notinverted");
+            case ResTable_config::UI_THEME_MODE_HOLO_LIGHT:
+                res.append("hololight");
                 break;
             default:
-                res.appendFormat("uiInvertedMode=%d", dtohs(uiInvertedMode));
+                res.appendFormat("uiThemeMode=%d", dtohs(uiThemeMode));
                 break;
         }
     }
